@@ -72,6 +72,7 @@ function scene:show( event )
 	end
 
 	createGlobule("normal",80) --TODO: remove this; for testing only
+	createGlobule("normal",40)
 
 	local function update()
 		for _, globule in ipairs (globules) do
