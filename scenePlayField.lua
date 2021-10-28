@@ -26,7 +26,59 @@ function scene:show( event )
  
    if ( phase == "will" ) then
       -- Called when the scene is still off screen (but is about to come on screen).
-   elseif ( phase == "did" ) then
+     	 
+      	local pysics = require("physics")
+	physics.start()
+	physics.setGravity(0,0)
+	speedConstant = 3000
+
+	--Field boundries
+	local boundTop = display.newRect(0,0,display.contentWidth,0)
+	boundTop.anchorX = 0; boundTop.anchorY = 0
+	local boundBottom = display.newRect(0, display.contentHeight, display.contentWidth, 0)
+	boundBottom.anchorX = 0; boundBottom.anchorY = 0
+	local boundLeft = display.newRect(0, 0,0 , display.contentHeight)
+	boundLeft.anchorX = 0; boundLeft.anchorY = 0
+	local boundRight = display.newRect(display.contentWidth, 0, 0, display.contentHeight)
+	boundRight.anchorX = 0; boundRight.anchorY = 0
+	pysics.addBody(boundTop, 'static')
+	pysics.addBody(boundBottom, 'static')
+	pysics.addBody(boundLeft, 'static')
+	pysics.addBody(boundRight, 'static')
+
+
+	--Globules
+	local globules = {} --table to reference all globules
+
+	local function createGlobule(type,size)
+		local group = display.newGroup() -- All globule elements contained in a group, then we only have to manipulate the group
+		table.insert(globules,group)
+		group.size = size --Represents the current globule size TODO: populate from function parameter
+		startX = display.contentCenterX --TODO: create some randomization
+		startY = display.contentCenterY --TODU: randomize
+		local glob = display.newCircle(0,0,group.size)
+		glob:setFillColor(.7,.4,.4)
+		group:insert(glob)
+		sceneGroup:insert(group)
+		group.x = startX
+		group.y = startY
+		physics.addBody(group, 'dynamic', {bounce=1,radius=group.size})
+		print("number:",(math.random()-0.5) *20/group.size)
+		group:applyForce((math.random()-0.5)*speedConstant/group.size,(math.random()-0.5)*speedConstant/group.size, group.x,group.y)
+		group:applyTorque(900/group.size)
+
+
+	end
+
+	createGlobule("normal",80) --TODO: remove this; for testing only
+
+	local function update()
+		for _, globule in ipairs (globules) do
+			print("Update function placeholder")
+		end
+	end
+
+  elseif ( phase == "did" ) then
       -- Called when the scene is now on screen.
       -- Insert code here to make the scene come alive.
       -- Example: start timers, begin animation, play audio, etc.
@@ -40,26 +92,6 @@ function scene:hide( event )
    local phase = event.phase
  
    if ( phase == "will" ) then
-	   -- None of this is working right now
-	   local globules = {}
-	   sceneGroup:insert(globules)
-	   local test = display.newCircle(100,100,100) --this is only a test
-	   sceneGroup:insert(test) --still part of the test
-	   local function createGlobule(event)
-		local group = display.newGroup() -- All globule elements contained in a group, then we only have to manipulate the group
-		table.insert(globules,group)
-		group.size = 80 --Represents the current globule size
-		startX = display.contentCenterX --TODO: create some randomization
-		startY = display.contentCenterY --TODU: randomize
-		group.x = startX
-		group.y = startY
-		local glob = display.newCircle(0,0,group.size)
-		glob:setFillColor(.4,.4,.7)
-		group:insert(glob)
-		sceneGroup:insert(glob)
-
-	end
-
       -- Called when the scene is on screen (but is about to go off screen).
       -- Insert code here to "pause" the scene.
       -- Example: stop timers, stop animation, stop audio, etc.
