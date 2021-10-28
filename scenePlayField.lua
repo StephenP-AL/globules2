@@ -53,19 +53,20 @@ function scene:show( event )
 	local function createGlobule(type,size)
 		local group = display.newGroup() -- All globule elements contained in a group, then we only have to manipulate the group
 		table.insert(globules,group)
-		group.size = size --Represents the current globule size TODO: populate from function parameter
-		startX = display.contentCenterX --TODO: create some randomization
-		startY = display.contentCenterY --TODU: randomize
+		group.size = size --Represents the current globule size 
+		startX = math.random() * display.contentCenterX 
+		startY = math.random() * display.contentCenterY
 		local glob = display.newCircle(0,0,group.size)
-		glob:setFillColor(.7,.4,.4)
+		glob:setFillColor(.7,.4,.4) -- TODO: randomize color
 		group:insert(glob)
 		sceneGroup:insert(group)
 		group.x = startX
 		group.y = startY
 		physics.addBody(group, 'dynamic', {bounce=1,radius=group.size})
 		print("number:",(math.random()-0.5) *20/group.size)
-		group:applyForce((math.random()-0.5)*speedConstant/group.size,(math.random()-0.5)*speedConstant/group.size, group.x,group.y)
-		group:applyTorque(900/group.size)
+		angle = math.random() * 360 -- random direction of movement
+		group:applyForce((math.cos(angle))*speedConstant/group.size,(math.sin(angle))*speedConstant/group.size, group.x,group.y) -- Ensure consistent speed among globules of the same size
+		group:applyTorque(math.random() * 1900/group.size)
 
 
 	end
