@@ -1,7 +1,7 @@
------------------------------------------------------------------------------------------
---
--- main.lua
---
------------------------------------------------------------------------------------------
+--[[
+--Globules by AnPro (the Anti-Procrastinators)
+--]]
 
--- Your code here
+local composer = require("composer")
+
+composer.gotoScene("scenePlayField") -- For testing purposes; will probably go to menu first
