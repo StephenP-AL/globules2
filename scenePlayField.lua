@@ -30,7 +30,8 @@ function scene:show( event )
       	local pysics = require("physics")
 	physics.start()
 	physics.setGravity(0,0)
-	speedConstant = 3000
+	speedConstant = 10 -- Bases speed for globules TODO: Adjust based upon current difficulty
+	speedScale = 3.5 --Adjusts the relative speed between globules of different sizes
 
 	--Field boundries
 	local boundTop = display.newRect(0,0,display.contentWidth,0)
@@ -54,25 +55,26 @@ function scene:show( event )
 		local group = display.newGroup() -- All globule elements contained in a group, then we only have to manipulate the group
 		table.insert(globules,group)
 		group.size = size --Represents the current globule size 
-		startX = math.random() * display.contentCenterX 
-		startY = math.random() * display.contentCenterY
+		startX = math.random() * display.contentWidth
+		startY = math.random() * display.contentHeight
 		local glob = display.newCircle(0,0,group.size)
 		glob:setFillColor(.7,.4,.4) -- TODO: randomize color
 		group:insert(glob)
 		sceneGroup:insert(group)
 		group.x = startX
 		group.y = startY
-		physics.addBody(group, 'dynamic', {bounce=1,radius=group.size})
+		physics.addBody(group, 'dynamic', {bounce=1,radius=group.size,density=0})
 		print("number:",(math.random()-0.5) *20/group.size)
-		angle = math.random() * 360 -- random direction of movement
-		group:applyForce((math.cos(angle))*speedConstant/group.size,(math.sin(angle))*speedConstant/group.size, group.x,group.y) -- Ensure consistent speed among globules of the same size
+		angle = math.random() * 2 * math.pi -- random direction of movement
+		group:applyForce((math.cos(angle))*speedConstant/group.size,(math.sin(angle))*speedConstant - math.log(group.size/10)/speedScale, group.x,group.y) -- Ensure consistent speed among globules of the same size
 		group:applyTorque(math.random() * 1900/group.size)
 
 
 	end
 
-	createGlobule("normal",80) --TODO: remove this; for testing only
-	createGlobule("normal",40)
+	createGlobule("normal",60) --TODO: remove this; for testing only
+	createGlobule("normal",30)
+	createGlobule("normal",15)
 
 	local function update()
 		for _, globule in ipairs (globules) do
