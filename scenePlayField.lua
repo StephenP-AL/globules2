@@ -58,7 +58,6 @@ function scene:show( event )
 		startX = math.random() * display.contentWidth
 		startY = math.random() * display.contentHeight
 		local glob = display.newCircle(0,0,group.size)
-		glob:setFillColor(.7,.4,.4) -- TODO: randomize color
 		group:insert(glob)
 		sceneGroup:insert(group)
 		group.x = startX
@@ -69,7 +68,37 @@ function scene:show( event )
 		group:applyForce((math.cos(angle))*speedConstant/group.size,(math.sin(angle))*speedConstant - math.log(group.size/10)/speedScale, group.x,group.y) -- Ensure consistent speed among globules of the same size
 		group:applyTorque(math.random() * 1900/group.size)
 
+		--color
+		local cA = math.random()
+		local cB = math.random()
+		local cC = math.random()
+		local cD = 0
+		local cE = 0
+		local cF = 0
 
+		if cA > 0.4 and cA < 0.6
+			then
+				cD = math.abs(0.5 - cA)
+			else
+				cD = 1 - cA
+			end
+		if cB > 0.4 and cB < 0.6
+			then
+				cE = math.abs(0.5 - cB)
+			else
+				cE = 1 - cB
+			end
+		if cC > 0.4 and cB < 0.6
+			then
+				cF = math.abs(0.5 - cC)
+			else
+				cF = 1 - cC
+		end
+
+
+		glob:setFillColor(cA,cB,cC) 
+		glob:setStrokeColor(cD,cE,cF)
+		glob.strokeWidth = 2
 	end
 
 	createGlobule("normal",60) --TODO: remove this; for testing only
