@@ -31,7 +31,8 @@ function scene:show( event )
 	physics.start()
 	physics.setGravity(0,0)
 	speedConstant = 10 -- Bases speed for globules TODO: Adjust based upon current difficulty
-	speedScale = 3.5 --Adjusts the relative speed between globules of different sizes
+	speedScale = 6.5 --Adjusts the relative speed between globules of different sizes
+	testSize = 80 --TODO: remove this
 
 	--Field boundries
 	local boundTop = display.newRect(0,0,display.contentWidth,0)
@@ -51,59 +52,102 @@ function scene:show( event )
 	--Globules
 	local globules = {} --table to reference all globules
 
-	local function createGlobule(type,size)
+	function tapGlobule(event)
+        	if (event.target.hp > 0) then
+			print("armored")
+		        event.target.hp = event.target.hp - 1
+		elseif (event.target.size < 21) then
+		        print("size")
+		        event.target:removeSelf()
+		else
+			print("split")
+			local angle = math.random() * 2 * math.pi
+			local x = math.cos(angle)
+			local y = math.sin(angle)
+			createGlobule(event.target.type,event.target.size / 2, x * event.target.size / 2 + event.target.x, y * event.target.size / 2 + event.target.y, x, y, event.target.red, event.target.green, event.target.blue)
+			createGlobule(event.target.type,event.target.size / 2, -x * event.target.size / 2 + event.target.x, -y * event.target.size / 2 + event.target.y, -x, -y, event.target.red, event.target.green, event.target.blue)
+--			createGlobule(event.target.type,math.random() * display.contentCenterX, math.random() * display.contentCenterY, -x, -y, event.target.red, event.target.green, event.target.blue)
+			event.target:removeSelf()
+		end
+
+		print("globule tapped")
+	end
+        function createGlobule(type,size,startX,startY,deltaX,deltaY,red,green,blue)
 		local group = display.newGroup() -- All globule elements contained in a group, then we only have to manipulate the group
 		table.insert(globules,group)
 		group.size = size --Represents the current globule size 
-		startX = math.random() * display.contentWidth
-		startY = math.random() * display.contentHeight
-		local glob = display.newCircle(0,0,group.size)
-		group:insert(glob)
-		sceneGroup:insert(group)
+		group.type = type
+		group.hp = 0
+		if (type == "armored") then
+			group.hp = 2
+		end
 		group.x = startX
 		group.y = startY
+
+		group.red = red
+		group.green = green
+		group.blue = blue
+
+		local glob = display.newCircle(0,0,group.size)
+		group:addEventListener("tap",tapGlobule)
+		group:insert(glob)
+		sceneGroup:insert(group)
+
 		physics.addBody(group, 'dynamic', {bounce=1,radius=group.size,density=0})
-		print("number:",(math.random()-0.5) *20/group.size)
-		angle = math.random() * 2 * math.pi -- random direction of movement
-		group:applyForce((math.cos(angle))*speedConstant/group.size,(math.sin(angle))*speedConstant - math.log(group.size/10)/speedScale, group.x,group.y) -- Ensure consistent speed among globules of the same size
+		local speedLog = math.log(group.size) / speedScale
+		print (speedLog)
+		group:applyForce(deltaX * speedConstant * speedLog, deltaY * speedConstant * speedLog ) -- Ensure consistent speed among globules of the same size
 		group:applyTorque(math.random() * 1900/group.size)
 
 		--color
-		local cA = math.random()
-		local cB = math.random()
-		local cC = math.random()
 		local cD = 0
 		local cE = 0
 		local cF = 0
 
-		if cA > 0.4 and cA < 0.6
+		if red > 0.4 and red < 0.6
 			then
-				cD = math.abs(0.5 - cA)
+				cD = math.abs(0.5 - red)
 			else
-				cD = 1 - cA
+				cD = 1 - red
 			end
-		if cB > 0.4 and cB < 0.6
+		if green > 0.4 and green < 0.6
 			then
-				cE = math.abs(0.5 - cB)
+				cE = math.abs(0.5 - green)
 			else
-				cE = 1 - cB
+				cE = 1 - green
 			end
-		if cC > 0.4 and cB < 0.6
+		if blue > 0.4 and blue < 0.6
 			then
-				cF = math.abs(0.5 - cC)
+				cF = math.abs(0.5 - blue)
 			else
-				cF = 1 - cC
+				cF = 1 - blue
 		end
 
 
-		glob:setFillColor(cA,cB,cC) 
+		glob:setFillColor(red,green,blue) 
 		glob:setStrokeColor(cD,cE,cF)
-		glob.strokeWidth = 2
+		if (type == "armored") then
+			glob.strokeWidth = 6
+		else
+			glob.strokeWidth = 2
+		end
 	end
 
-	createGlobule("normal",60) --TODO: remove this; for testing only
-	createGlobule("normal",30)
-	createGlobule("normal",15)
+	local function spawnGlobule()
+		local angle = math.random() * 2 * math.pi-- random direction of movement
+		local deltaX = math.cos(angle)
+		local deltaY = math.sin(angle)
+		local startX = math.random() * display.contentCenterX
+		local startY = math.random() * display.contentCenterY
+		local red = math.random()
+		local green = math.random()
+		local blue = math.random()
+		createGlobule("normal", testSize,startX,startY,deltaX,deltaY,red,green,blue)
+--local function createGlobule(type,size,startX,startY,deltaX,deltaY,red,green,blue)
+                print("spawn")
+   	end
+
+	spawnGlobule()
 
 	local function update()
 		for _, globule in ipairs (globules) do
