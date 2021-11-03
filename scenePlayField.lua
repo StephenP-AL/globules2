@@ -158,11 +158,16 @@ function scene:show( event )
 
 	spawnGlobule()
 
-
+	spawnTimer = 300
 	local function update()
 		for _, globule in ipairs (globules) do
 --			print("Update function placeholder")
 
+		end
+		spawnTimer = spawnTimer - 1
+		if (spawnTimer == 0) then
+			spawnGlobule()
+			spawnTimer = 300
 		end
 	end
 
