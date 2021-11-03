@@ -31,7 +31,7 @@ function scene:show( event )
 	physics.start()
 	physics.setGravity(0,0)
 	speedConstant = 10 -- Bases speed for globules TODO: Adjust based upon current difficulty
-	speedScale = 6.5 --Adjusts the relative speed between globules of different sizes
+	speedScale = 16.5 --Adjusts the relative speed between globules of different sizes
 	testSize = 80 --TODO: remove this
 
 	--Field boundries
@@ -72,6 +72,15 @@ function scene:show( event )
 
 		print("globule tapped")
 	end
+
+	function squishX(obj)
+		transition.to(obj,{transition = easing.inOutSine, xScale = .9, yScale = 1.1, time = 1500, onComplete = squishY})
+	end
+
+	function squishY(obj)
+		transition.to(obj,{transition = easing.inOutSine, yScale = .9, xScale = 1.1, time = 1500, onComplete = squishX})
+	end
+	
         function createGlobule(type,size,startX,startY,deltaX,deltaY,red,green,blue)
 		local group = display.newGroup() -- All globule elements contained in a group, then we only have to manipulate the group
 		table.insert(globules,group)
@@ -97,7 +106,8 @@ function scene:show( event )
 		local speedLog = math.log(group.size) / speedScale
 		print (speedLog)
 		group:applyForce(deltaX * speedConstant * speedLog, deltaY * speedConstant * speedLog ) -- Ensure consistent speed among globules of the same size
-		group:applyTorque(math.random() * 1900/group.size)
+--		group:applyTorque(1- math.random() / 100 )
+		squishX(group)
 
 		--color
 		local cD = 0
@@ -143,18 +153,20 @@ function scene:show( event )
 		local green = math.random()
 		local blue = math.random()
 		createGlobule("normal", testSize,startX,startY,deltaX,deltaY,red,green,blue)
---local function createGlobule(type,size,startX,startY,deltaX,deltaY,red,green,blue)
                 print("spawn")
    	end
 
 	spawnGlobule()
 
+
 	local function update()
 		for _, globule in ipairs (globules) do
-			print("Update function placeholder")
+--			print("Update function placeholder")
+
 		end
 	end
 
+	timer.performWithDelay(16,update,0)
   elseif ( phase == "did" ) then
       -- Called when the scene is now on screen.
       -- Insert code here to make the scene come alive.
