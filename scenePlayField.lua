@@ -30,9 +30,23 @@ function scene:show( event )
       	local pysics = require("physics")
 	physics.start()
 	physics.setGravity(0,0)
+
+	--globule constants
 	speedConstant = 10 -- Bases speed for globules TODO: Adjust based upon current difficulty
 	speedScale = 16.5 --Adjusts the relative speed between globules of different sizes
-	testSize = 80 --TODO: remove this
+	testSize = 80 -- default size of globule TODO: find a better way to do this
+
+	--Play statistics
+	saturationLimit = 400
+	saturation = 0
+	score = 0
+
+	--
+	-- TODO replace these text displays with widgets
+	local saturationText = display.newText("Saturation: 0",0,0)
+	saturationText.anchorX = 0
+	local scoreText = display.newText("Score: 0",0,20)
+	scoreText.anchorX = 0
 
 	--Field boundries
 	local boundTop = display.newRect(0,0,display.contentWidth,0)
@@ -57,8 +71,10 @@ function scene:show( event )
 			print("armored")
 		        event.target.hp = event.target.hp - 1
 		elseif (event.target.size < 21) then
-		        print("size")
+			event.target.delete = true
 		        event.target:removeSelf()
+			score = score + 1
+			scoreText.text = "Score: "..score
 		else
 			print("split")
 			local angle = math.random() * 2 * math.pi
@@ -66,24 +82,26 @@ function scene:show( event )
 			local y = math.sin(angle)
 			createGlobule(event.target.type,event.target.size / 2, x * event.target.size / 2 + event.target.x, y * event.target.size / 2 + event.target.y, x, y, event.target.red, event.target.green, event.target.blue)
 			createGlobule(event.target.type,event.target.size / 2, -x * event.target.size / 2 + event.target.x, -y * event.target.size / 2 + event.target.y, -x, -y, event.target.red, event.target.green, event.target.blue)
---			createGlobule(event.target.type,math.random() * display.contentCenterX, math.random() * display.contentCenterY, -x, -y, event.target.red, event.target.green, event.target.blue)
+			event.target.delete = true
 			event.target:removeSelf()
 		end
 
 		print("globule tapped")
 	end
 
+	-- Globule animation
 	function squishX(obj)
-		transition.to(obj,{transition = easing.inOutSine, xScale = .9, yScale = 1.1, time = 1500, onComplete = squishY})
+		transition.to(obj,{transition = easing.inOutSine, xScale = .9, yScale = 1.1, time = 3500, onComplete = squishY})
 	end
 
 	function squishY(obj)
-		transition.to(obj,{transition = easing.inOutSine, yScale = .9, xScale = 1.1, time = 1500, onComplete = squishX})
+		transition.to(obj,{transition = easing.inOutSine, yScale = .9, xScale = 1.1, time = 3500, onComplete = squishX})
 	end
 	
         function createGlobule(type,size,startX,startY,deltaX,deltaY,red,green,blue)
 		local group = display.newGroup() -- All globule elements contained in a group, then we only have to manipulate the group
 		table.insert(globules,group)
+		group.delete = false
 		group.size = size --Represents the current globule size 
 		group.type = type
 		group.hp = 0
@@ -153,21 +171,27 @@ function scene:show( event )
 		local green = math.random()
 		local blue = math.random()
 		createGlobule("normal", testSize,startX,startY,deltaX,deltaY,red,green,blue)
-                print("spawn")
+                print("Golbule Spawn")
    	end
 
 	spawnGlobule()
 
-	spawnTimer = 300
+	spawnTimer = 600
 	local function update()
-		for _, globule in ipairs (globules) do
---			print("Update function placeholder")
-
+		local sat = 0
+		for index, globule in pairs (globules) do
+			if (globule.delete) then
+				table.remove(globules,index)
+			else
+				sat = sat + globule.size
+			end
 		end
+		saturation = sat
+		saturationText.text = "Saturation: "..saturation
 		spawnTimer = spawnTimer - 1
 		if (spawnTimer == 0) then
 			spawnGlobule()
-			spawnTimer = 300
+			spawnTimer = 600
 		end
 	end
 
