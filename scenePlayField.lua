@@ -164,7 +164,7 @@ function scene:show( event )
 		end
 	end
 
-	local function spawnGlobule()
+	local function spawnGlobule(type)
 		local angle = math.random() * 2 * math.pi-- random direction of movement
 		local deltaX = math.cos(angle)
 		local deltaY = math.sin(angle)
@@ -173,13 +173,14 @@ function scene:show( event )
 		local red = math.random()
 		local green = math.random()
 		local blue = math.random()
-		createGlobule("normal", testSize,startX,startY,deltaX,deltaY,red,green,blue)
+		createGlobule(type, testSize,startX,startY,deltaX,deltaY,red,green,blue)
                 print("Golbule Spawn")
    	end
 
-	spawnGlobule()
+	spawnGlobule("normal")
 
-	spawnTimer = 600
+	local initSpawnTimer = event.params.spawnTimer
+	local spawnTimer = initSpawnTimer
 	local function update()
 		local sat = 0
 		for index, globule in pairs (globules) do
@@ -194,7 +195,7 @@ function scene:show( event )
 		spawnTimer = spawnTimer - 1
 		if (spawnTimer == 0) then
 			spawnGlobule()
-			spawnTimer = 600
+			spawnTimer = initSpawnTimer
 		end
 	end
 
