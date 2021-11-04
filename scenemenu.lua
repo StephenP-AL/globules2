@@ -1,6 +1,7 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
- 
+local widget = require("widget")
+
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
 -- unless "composer.removeScene()" is called.
@@ -27,6 +28,29 @@ function scene:show( event )
  
    if ( phase == "will" ) then
       -- Called when the scene is still off screen (but is about to come on screen).
+local function startListener(event)
+	if (event.phase =="ended")
+		then
+			local params = {
+				spawnTimer = 500
+			}
+			composer.gotoScene("scenePlayField",{params = params} )
+		end
+	end
+
+
+local startButton = widget.newButton(
+	{
+		x=display.contentCenterX,
+		y=100,
+		label="Start",
+		width=180,
+		height=30,
+		shape="roundedRect",
+		onEvent=startListener
+	}
+	)
+sceneGroup:insert(startButton)
    elseif ( phase == "did" ) then
       -- Called when the scene is now on screen.
       -- Insert code here to make the scene come alive.

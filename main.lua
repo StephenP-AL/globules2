@@ -4,4 +4,5 @@
 
 local composer = require("composer")
 
-composer.gotoScene("scenePlayField") -- For testing purposes; will probably go to menu first
+composer.gotoScene("scenemenu") -- For testing purposes; will probably go to menu first
+--composer.gotoScene("scenePlayField") -- For testing purposes; will probably go to menu first
