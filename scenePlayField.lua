@@ -129,6 +129,17 @@ function scene:show( event )
 		group:insert(glob)
 		sceneGroup:insert(group)
 
+		if (type == "multi") then
+
+			globlette1 = display.newCircle(
+				math.cos(math.pi * 2 / 3) * group.size / 2, 
+				math.sin(math.pi * 2 / 3) * group.size / 2,
+				group.size / 2)
+
+			globlette1:
+		end --TODO: complete this
+
+
 		physics.addBody(group, 'dynamic', {bounce=1,radius=group.size,density=0})
 		local speedLog = math.log(group.size) / speedScale
 		print (speedLog)
