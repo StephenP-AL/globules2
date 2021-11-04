@@ -32,7 +32,7 @@ local function startListener(event)
 	if (event.phase =="ended")
 		then
 			local params = {
-				spawnTimer = 100
+				spawnTimer = 800
 			}
 			composer.gotoScene("scenePlayField",{params = params} )
 		end

@@ -66,10 +66,16 @@ function scene:show( event )
 	--Globules
 	local globules = {} --table to reference all globules
 
+	function addScore(points)
+		score = score + points
+		scoreText.text = "Score: "..score
+	end
 	function tapGlobule(event)
         	if (event.target.hp > 0) then
 			print("armored")
 		        event.target.hp = event.target.hp - 1
+			--TODO: need a visual and audio indicator of hit
+			addScore(1)
 		elseif (event.target.size < 21) then
 			event.target.delete = true
 		        event.target:removeSelf()
@@ -158,7 +164,7 @@ function scene:show( event )
 		glob:setFillColor(red,green,blue) 
 		glob:setStrokeColor(cD,cE,cF)
 		if (type == "armored") then
-			glob.strokeWidth = 6
+			glob.strokeWidth = 10
 		else
 			glob.strokeWidth = 2
 		end
@@ -178,6 +184,7 @@ function scene:show( event )
    	end
 
 	spawnGlobule("normal")
+	spawnGlobule("armored")
 
 	local initSpawnTimer = event.params.spawnTimer
 	local spawnTimer = initSpawnTimer
@@ -194,7 +201,7 @@ function scene:show( event )
 		saturationText.text = "Saturation: "..saturation
 		spawnTimer = spawnTimer - 1
 		if (spawnTimer == 0) then
-			spawnGlobule()
+			spawnGlobule("normal")
 			spawnTimer = initSpawnTimer
 		end
 	end
