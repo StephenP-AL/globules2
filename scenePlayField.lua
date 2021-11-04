@@ -73,7 +73,7 @@ function scene:show( event )
 		elseif (event.target.size < 21) then
 			event.target.delete = true
 		        event.target:removeSelf()
-			score = score + 1
+			score = score + 4
 			scoreText.text = "Score: "..score
 		else
 			print("split")
@@ -84,6 +84,9 @@ function scene:show( event )
 			createGlobule(event.target.type,event.target.size / 2, -x * event.target.size / 2 + event.target.x, -y * event.target.size / 2 + event.target.y, -x, -y, event.target.red, event.target.green, event.target.blue)
 			event.target.delete = true
 			event.target:removeSelf()
+			score = score + 1
+			scoreText.text = "Score: "..score
+
 		end
 
 		print("globule tapped")
