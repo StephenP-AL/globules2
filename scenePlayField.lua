@@ -83,11 +83,49 @@ function scene:show( event )
 			scoreText.text = "Score: "..score
 		else
 			print("split")
-			local angle = math.random() * 2 * math.pi
-			local x = math.cos(angle)
-			local y = math.sin(angle)
-			createGlobule(event.target.type,event.target.size / 2, x * event.target.size / 2 + event.target.x, y * event.target.size / 2 + event.target.y, x, y, event.target.red, event.target.green, event.target.blue)
-			createGlobule(event.target.type,event.target.size / 2, -x * event.target.size / 2 + event.target.x, -y * event.target.size / 2 + event.target.y, -x, -y, event.target.red, event.target.green, event.target.blue)
+			if (event.target.type == "multi") then
+				local angle = math.random() * 2 * math.pi
+				for i = 0,2,1 do
+					local x = math.cos(angle + i * 4 / 3 * math.pi) 
+					local y = math.sin(angle + i * 4 / 3 * math.pi) 
+					createGlobule(
+						event.target.type,
+						event.target.size / 2,
+						x * event.target.size / 2 + event.target.x,
+						y * event.target.size / 2 + event.target.y,
+						x,
+						y,
+						event.target.red,
+						event.target.green,
+						event.target.blue
+						)
+				end
+			else 
+				local angle = math.random() * 2 * math.pi
+				local x = math.cos(angle)
+				local y = math.sin(angle)
+				createGlobule(
+					event.target.type,
+					event.target.size / 2, 
+					x * event.target.size / 2 + event.target.x, 
+					y * event.target.size / 2 + event.target.y, 
+					x, 
+					y, 
+					event.target.red, 
+					event.target.green, 
+					event.target.blue)
+				createGlobule(
+					event.target.type,
+					event.target.size / 2, 
+					-x * event.target.size / 2 + event.target.x, 
+					-y * event.target.size / 2 + event.target.y, 
+					-x, 
+					-y, 
+					event.target.red, 
+					event.target.green, 
+					event.target.blue)
+					
+				end
 			event.target.delete = true
 			event.target:removeSelf()
 			score = score + 1
@@ -129,16 +167,6 @@ function scene:show( event )
 		group:insert(glob)
 		sceneGroup:insert(group)
 
-		if (type == "multi") then
-
-			globlette1 = display.newCircle(
-				math.cos(math.pi * 2 / 3) * group.size / 2, 
-				math.sin(math.pi * 2 / 3) * group.size / 2,
-				group.size / 2)
-
-			globlette1:
-		end --TODO: complete this
-
 
 		physics.addBody(group, 'dynamic', {bounce=1,radius=group.size,density=0})
 		local speedLog = math.log(group.size) / speedScale
@@ -173,7 +201,22 @@ function scene:show( event )
 
 
 		glob:setFillColor(red,green,blue) 
-		glob:setStrokeColor(cD,cE,cF)
+		glob:setStrokeColor(cD,cE,cF)		
+
+		if (type == "multi") then
+			for i=0, 3 ,1 do
+				globlette1 = display.newCircle(
+					math.cos(math.pi * i * 4 / 3) * group.size / 2, 
+					math.sin(math.pi * i * 4 / 3) * group.size / 2,
+					group.size / 2)
+				globlette1:setFillColor(red,green,blue)
+				globlette1:setStrokeColor(cD,cE,cF)
+				globlette1.strokeWidth = 2
+				group:insert(globlette1)
+			end
+		end --TODO: complete this
+
+
 		if (type == "armored") then
 			glob.strokeWidth = 10
 		else
@@ -194,8 +237,10 @@ function scene:show( event )
                 print("Golbule Spawn")
    	end
 
+	--TODO: remove test globules
 	spawnGlobule("normal")
 	spawnGlobule("armored")
+	spawnGlobule("multi")
 
 	local initSpawnTimer = event.params.spawnTimer
 	local spawnTimer = initSpawnTimer
@@ -212,7 +257,7 @@ function scene:show( event )
 		saturationText.text = "Saturation: "..saturation
 		spawnTimer = spawnTimer - 1
 		if (spawnTimer == 0) then
-			spawnGlobule("normal")
+			spawnGlobule("normal") --TODO:Replace this with a set spawn table passed as param
 			spawnTimer = initSpawnTimer
 		end
 	end
