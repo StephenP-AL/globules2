@@ -166,9 +166,11 @@ function scene:show( event )
 		group:addEventListener("tap",tapGlobule)
 		group:insert(glob)
 		sceneGroup:insert(group)
-
-
-		physics.addBody(group, 'dynamic', {bounce=1,radius=group.size,density=0})
+		if (type == "paramecium") then
+			physics.addBody(group, 'dynamic', {bounce=1,radius=group.size,density=.1})
+		else
+			physics.addBody(group, 'dynamic', {bounce=1,radius=group.size,density=0})
+		end
 		local speedLog = math.log(group.size) / speedScale
 		print (speedLog)
 		group:applyForce(deltaX * speedConstant * speedLog, deltaY * speedConstant * speedLog ) -- Ensure consistent speed among globules of the same size
@@ -214,7 +216,20 @@ function scene:show( event )
 				globlette1.strokeWidth = 2
 				group:insert(globlette1)
 			end
-		end --TODO: complete this
+		end 
+		--Paramecium
+		if (type == "paramecium") then
+			for i=0, 2 * math.pi,math.pi/12
+				do
+					local x = math.cos(i)
+					local y = math.sin(i)
+					line = display.newLine(x * group.size,y * group.size,x * (group.size + 6),y* (group.size +6))
+					line:setStrokeColor(cD,cE,cF)
+					group:insert(line)
+					group.jump = math.random() * 200
+				end
+			end
+
 
 
 		if (type == "armored") then
@@ -238,9 +253,10 @@ function scene:show( event )
    	end
 
 	--TODO: remove test globules
-	spawnGlobule("normal")
+--[[	spawnGlobule("normal")
 	spawnGlobule("armored")
-	spawnGlobule("multi")
+	spawnGlobule("multi")]]
+	spawnGlobule("paramecium")
 
 	local initSpawnTimer = event.params.spawnTimer
 	local spawnTimer = initSpawnTimer
@@ -252,6 +268,15 @@ function scene:show( event )
 			else
 				sat = sat + globule.size
 			end
+			-- Random movement of paramecium
+			if (globule.type == "paramecium") then
+				globule.jump = globule.jump - 1
+				if (globule.jump <= 0) then
+					globule:applyForce((0.5 - math.random()) * globule.size , (.5 - math.random()) * globule.size   ) 
+					globule.jump = math.random() * 200
+				end
+			end
+
 		end
 		saturation = sat
 		saturationText.text = "Saturation: "..saturation
