@@ -40,8 +40,10 @@ function scene:show( event )
 	saturationLimit = 400
 	saturation = 0
 	score = 0
-
-	--
+	
+	local background = display.newRect(display.contentCenterX,display.contentCenterY,display.contentWidth + 20,display.contentHeight+90)
+	background:setFillColor(.1,.4,.4)
+	sceneGroup:insert(background)
 	-- TODO replace these text displays with widgets
 	local saturationText = display.newText("Saturation: 0",0,0)
 	saturationText.anchorX = 0
@@ -167,7 +169,7 @@ function scene:show( event )
 		group:insert(glob)
 		sceneGroup:insert(group)
 		if (type == "paramecium") then
-			physics.addBody(group, 'dynamic', {bounce=1,radius=group.size,density=.1})
+			physics.addBody(group, 'dynamic', {bounce=.01,radius=group.size,density=0, friction = 14})
 		else
 			physics.addBody(group, 'dynamic', {bounce=1,radius=group.size,density=0})
 		end
@@ -228,6 +230,15 @@ function scene:show( event )
 					group:insert(line)
 					group.jump = math.random() * 200
 				end
+				if (group.size > 70) then
+					group.force = 60
+				else if (group.size > 30) then
+					group.force = 180
+				else
+					group.force = 15
+
+				end
+			end
 			end
 
 
@@ -272,7 +283,9 @@ function scene:show( event )
 			if (globule.type == "paramecium") then
 				globule.jump = globule.jump - 1
 				if (globule.jump <= 0) then
-					globule:applyForce((0.5 - math.random()) * globule.size , (.5 - math.random()) * globule.size   ) 
+					local x = math.random()
+					local y = math.random()
+					globule:applyForce((0.5 - math.random()) * globule.size, (.5 - math.random()) * globule.size) 
 					globule.jump = math.random() * 200
 				end
 			end
