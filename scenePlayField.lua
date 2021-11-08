@@ -230,6 +230,7 @@ function scene:show( event )
 					group:insert(line)
 					group.jump = math.random() * 200
 				end
+				--[[
 				if (group.size > 70) then
 					group.force = 60
 				else if (group.size > 30) then
@@ -238,7 +239,7 @@ function scene:show( event )
 					group.force = 15
 
 				end
-			end
+			end]]
 			end
 
 
@@ -264,9 +265,9 @@ function scene:show( event )
    	end
 
 	--TODO: remove test globules
---[[	spawnGlobule("normal")
+	spawnGlobule("normal")
 	spawnGlobule("armored")
-	spawnGlobule("multi")]]
+	spawnGlobule("multi")
 	spawnGlobule("paramecium")
 
 	local initSpawnTimer = event.params.spawnTimer
