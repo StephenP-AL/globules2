@@ -36,6 +36,11 @@ function scene:show( event )
 	sceneGroup:insert(boundTop)
       	physics.addBody(boundTop,"static")
 
+	local function closeListener(event)
+		if (event.phase == "ended")then
+			composer.hideOverlay()
+		end
+	end
 	local background = display.newRoundedRect(display.contentCenterX,display.contentCenterY,display.contentWidth,display.contentHeight,4)
 	background:setFillColor(.2,0.2,0.5,.85)
 	sceneGroup:insert(background)
@@ -43,12 +48,28 @@ function scene:show( event )
 	introText = event.params.introText
 
 	for index, line in pairs(event.params.introText) do
-		text = display.newText(line,display.contentCenterX,display.contentHeight + index * 50)
-		transition.to(text,{y = index * 25, time = 4000})
+		text = display.newText(line,display.contentCenterX,display.contentHeight + index * 100,native.systemFont, 25)
+		transition.to(text,{y = index * 45, time = 10000 + index * 500})
 		sceneGroup:insert(text)
-
-
 	end
+	local closeButton= widget.newButton(
+   	{
+      		x = display.contentCenterX,
+		y = display.contentHeight + #event.params.introText * 110,
+      		id = "closeButton",
+      		label = "Close",
+      		labelColor = { default={ 1, 0.8, 0 }, over={ 0.2, 1, 1} },
+      		onEvent = closeListener,
+      		fontSize = 30, 
+      		width = 150,
+      		height = 85,
+      		defaultFile= "LevelButtonGlobulesImage_adobespark (1).png"
+   	}
+	)
+	print(#event.params.introText)
+	transition.to(closeButton,{y = (#event.params.introText + 1) * 45, time = 13000 + (#event.params.introText + 2) * 500})
+	sceneGroup:insert(closeButton)
+
 
    elseif ( phase == "did" ) then
       -- Called when the scene is now on screen.
@@ -62,11 +83,13 @@ function scene:hide( event )
  
    local sceneGroup = self.view
    local phase = event.phase
- 
+ 	local parent = event.parent
    if ( phase == "will" ) then
       -- Called when the scene is on screen (but is about to go off screen).
       -- Insert code here to "pause" the scene.
       -- Example: stop timers, stop animation, stop audio, etc.
+      	
+      	parent:resumeGame()
 
    elseif ( phase == "did" ) then
       -- Called immediately after scene goes off screen.

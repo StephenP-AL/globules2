@@ -67,6 +67,10 @@ function scene:show( event )
 	--Globules
 	local globules = {} --table to reference all globules
 
+	function scene:resumeGame()
+		pause = false
+		physics.start()
+	end
 	function addScore(points)
 		score = score + points
 		scoreText.text = "Score: "..score
@@ -252,19 +256,30 @@ function scene:show( event )
 		isModal = true,
 		params = {introText = event.params.introText}
 	}
-	print(event.params.introText[1])
 	composer.showOverlay("sceneLevelIntro",options)
 
 	local initSpawnTimer = event.params.spawnTimer
 	local spawnIterator = 1
 	local spawnTimer = initSpawnTimer
 	local function update()
+		if (pause == true)then
+			return
+		end
+		print(#globules)
 		local sat = 0
 		for index, globule in pairs (globules) do
 			if (globule.delete) then
 				table.remove(globules,index)
 			else
-				sat = sat + globule.size
+				if (globule.size == 80)then
+					sat = sat + globule.size
+				else if (globule.size == 40) then
+					sat = sat + 26
+				else if (globule.size == 20) then
+					sat = sat + 8
+				end
+				end
+				end
 			end
 			-- Random movement of paramecium
 			if (globule.type == "paramecium") then
