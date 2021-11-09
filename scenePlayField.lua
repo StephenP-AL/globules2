@@ -40,6 +40,7 @@ function scene:show( event )
 	saturationLimit = 400
 	saturation = 0
 	score = 0
+	pause = true
 
 	--
 	-- TODO replace these text displays with widgets
@@ -72,7 +73,6 @@ function scene:show( event )
 	end
 	function tapGlobule(event)
         	if (event.target.hp > 0) then
-			print("armored")
 		        event.target.hp = event.target.hp - 1
 			--TODO: need a visual and audio indicator of hit
 			addScore(1)
@@ -82,7 +82,6 @@ function scene:show( event )
 			score = score + 4
 			scoreText.text = "Score: "..score
 		else
-			print("split")
 			if (event.target.type == "multi") then
 				local angle = math.random() * 2 * math.pi
 				for i = 0,2,1 do
@@ -133,7 +132,6 @@ function scene:show( event )
 
 		end
 
-		print("globule tapped")
 	end
 
 	-- Globule animation
@@ -172,7 +170,6 @@ function scene:show( event )
 			physics.addBody(group, 'dynamic', {bounce=1,radius=group.size,density=0})
 		end
 		local speedLog = math.log(group.size) / speedScale
-		print (speedLog)
 		group:applyForce(deltaX * speedConstant * speedLog, deltaY * speedConstant * speedLog ) -- Ensure consistent speed among globules of the same size
 --		group:applyTorque(1- math.random() / 100 )
 		squishX(group)
@@ -249,8 +246,14 @@ function scene:show( event )
 		local green = math.random()
 		local blue = math.random()
 		createGlobule(type, testSize,startX,startY,deltaX,deltaY,red,green,blue)
-                print("Golbule Spawn")
    	end
+
+	local options = {
+		isModal = true,
+		params = {introText = event.params.introText}
+	}
+	print(event.params.introText[1])
+	composer.showOverlay("sceneLevelIntro",options)
 
 	local initSpawnTimer = event.params.spawnTimer
 	local spawnIterator = 1
@@ -278,7 +281,6 @@ function scene:show( event )
 		if (spawnIterator <= #event.params.spawnList)then
 			spawnTimer = spawnTimer - 1
 			if (spawnTimer == 0) then
-				print(#event.params.spawnList)
 				spawnGlobule(event.params.spawnList[spawnIterator]) --TODO:Replace this with a set spawn table passed as param
 				spawnIterator = spawnIterator + 1
 				spawnTimer = initSpawnTimer
@@ -287,6 +289,7 @@ function scene:show( event )
 		end
 
 	timer.performWithDelay(16,update,0)
+
   elseif ( phase == "did" ) then
       -- Called when the scene is now on screen.
       -- Insert code here to make the scene come alive.

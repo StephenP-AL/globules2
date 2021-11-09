@@ -42,10 +42,10 @@ local function startListener(event)
 					"paramecium"
 				},
 				introText = {
-					"Globule come from far away",
+					"Globule come from far away.",
 					"He want be solute,",
-					"but he much big",
-					"tap globule to make smol.",
+					"but he much big.",
+					"Tap globule to make smol.",
 					"Tap smol to make solute."
 
 				}
