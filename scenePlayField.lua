@@ -252,13 +252,8 @@ function scene:show( event )
                 print("Golbule Spawn")
    	end
 
-	--TODO: remove test globules
---[[	spawnGlobule("normal")
-	spawnGlobule("armored")
-	spawnGlobule("multi")]]
-	spawnGlobule("paramecium")
-
 	local initSpawnTimer = event.params.spawnTimer
+	local spawnIterator = 1
 	local spawnTimer = initSpawnTimer
 	local function update()
 		local sat = 0
@@ -280,12 +275,16 @@ function scene:show( event )
 		end
 		saturation = sat
 		saturationText.text = "Saturation: "..saturation
-		spawnTimer = spawnTimer - 1
-		if (spawnTimer == 0) then
-			spawnGlobule("normal") --TODO:Replace this with a set spawn table passed as param
-			spawnTimer = initSpawnTimer
+		if (spawnIterator <= #event.params.spawnList)then
+			spawnTimer = spawnTimer - 1
+			if (spawnTimer == 0) then
+				print(#event.params.spawnList)
+				spawnGlobule(event.params.spawnList[spawnIterator]) --TODO:Replace this with a set spawn table passed as param
+				spawnIterator = spawnIterator + 1
+				spawnTimer = initSpawnTimer
+			end
 		end
-	end
+		end
 
 	timer.performWithDelay(16,update,0)
   elseif ( phase == "did" ) then
