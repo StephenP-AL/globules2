@@ -1,7 +1,9 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
 local widget = require("widget")
-
+local background = display.newImageRect("globulesBackgroundImage.jpg", display.contentWidth*2.2 , display.contentHeight*2.2 )
+local levelbuttonImage = "LevelButtonGlobulesImage_adobespark (1).png"
+local settingsCogWheelImage = "cogWheelImage2.png"
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
 -- unless "composer.removeScene()" is called.
@@ -38,7 +40,15 @@ local function startListener(event)
 		end
 	end
 
-
+local function settingsListener(event)
+   if (event.phase =="ended")
+      then
+         local params = {
+            spawnTimer = 8800
+         }
+         composer.gotoScene("sceneSettings",{params = params} )
+      end
+   end
 local startButton = widget.newButton(
 	{
 		x=display.contentCenterX,
@@ -50,6 +60,71 @@ local startButton = widget.newButton(
 		onEvent=startListener
 	}
 	)
+local levelOneButton = widget.newButton(
+   {
+      x = display.contentCenterX,
+      y = display.contentCenterY-150,
+      id = "levelOneButton",
+      label = "Level 1",
+      labelColor = { default={ 1, 0.8, 0 }, over={ 0.2, 1, 1} },
+      onEvent = startListener,
+      fontSize = 30, 
+      width = 150,
+      height = 85,
+      defaultFile= levelbuttonImage
+   }
+);
+   
+     local levelTwoButton = widget.newButton(
+   {
+      x = display.contentCenterX,
+      y = display.contentCenterY-75,
+      id = "levelTwoButton",
+      label = "Level 2",
+      labelColor = { default={ 0.2, 1, 0 }, over={ 0.2, 1, 1} },
+      onEvent = startListener,
+      fontSize = 30, 
+      width = 150,
+      height = 85,
+      defaultFile= levelbuttonImage
+   }
+);
+  
+       local levelThreeButton = widget.newButton(
+   {
+      x = display.contentCenterX,
+      y = display.contentCenterY,
+      id = "levelThreeButton",
+      label = "Level 3",
+      labelColor = { default={ 0.2, 0.2, 1 }, over={ 0.2, 1, 1} },
+      onEvent = startListener,
+      fontSize = 30, 
+      width = 150,
+      height = 85,
+      defaultFile= levelbuttonImage
+   }
+);
+ local settingsCogWheel = widget.newButton(
+   {
+      x = display.contentWidth-50,
+      y = display.contentHeight,
+      id = "settingsCogWheel",
+      label = "",
+      labelColor = { default={ 0.2, 0.2, 1 }, over={ 0.2, 1, 1} },
+      onEvent = settingsListener,
+      fontSize = 30, 
+      width = 90,
+      height = 90,
+      defaultFile= settingsCogWheelImage
+   }
+);
+
+
+sceneGroup:insert(background);
+  sceneGroup:insert(levelTwoButton);
+   sceneGroup:insert(levelOneButton);
+sceneGroup:insert(levelThreeButton);
+sceneGroup:insert(settingsCogWheel)
 sceneGroup:insert(startButton)
    elseif ( phase == "did" ) then
       -- Called when the scene is now on screen.
