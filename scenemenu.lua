@@ -32,7 +32,22 @@ local function startListener(event)
 	if (event.phase =="ended")
 		then
 			local params = {
-				spawnTimer = 8800
+				spawnTimer = 80,
+				spawnList = {
+					"normal",
+					"armored",
+					"multi",
+					"paramecium"
+				},
+				introText = {
+					"Globule come from far away",
+					"He want be solute,",
+					"but he much big",
+					"tap globule to make smol.",
+					"Tap smol to make solute."
+
+				}
+
 			}
 			composer.gotoScene("scenePlayField",{params = params} )
 		end
