@@ -1,6 +1,6 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
- 
+
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
 -- unless "composer.removeScene()" is called.
@@ -37,17 +37,19 @@ function scene:show( event )
 	testSize = 80 -- default size of globule TODO: find a better way to do this
 
 	--Play statistics
-	saturationLimit = 400
+	saturationLimit = 500
 	saturation = 0
 	score = 0
 	pause = true
 
 	--
 	-- TODO replace these text displays with widgets
-	local saturationText = display.newText("Saturation: 0",0,0)
+	local saturationText = display.newText("Saturation: 0",0,-25)
 	saturationText.anchorX = 0
-	local scoreText = display.newText("Score: 0",0,20)
+	sceneGroup:insert(saturationText)
+	local scoreText = display.newText("Score: 0",0,-5)
 	scoreText.anchorX = 0
+	sceneGroup:insert(scoreText)
 
 	--Field boundries
 	local boundTop = display.newRect(0,0,display.contentWidth,0)
@@ -263,9 +265,9 @@ function scene:show( event )
 	local spawnTimer = initSpawnTimer
 	local function update()
 		if (pause == true)then
+			physics.pause()
 			return
 		end
-		print(#globules)
 		local sat = 0
 		for index, globule in pairs (globules) do
 			if (globule.delete) then
@@ -292,6 +294,10 @@ function scene:show( event )
 
 		end
 		saturation = sat
+		if (saturation > saturationLimit) then
+			pause = true
+			composer.showOverlay("sceneKillScreen")
+		end
 		saturationText.text = "Saturation: "..saturation
 		if (spawnIterator <= #event.params.spawnList)then
 			spawnTimer = spawnTimer - 1

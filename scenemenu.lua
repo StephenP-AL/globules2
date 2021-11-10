@@ -39,7 +39,10 @@ local function startListener(event)
 					"normal",
 					"armored",
 					"multi",
-					"paramecium"
+					"paramecium",
+					"normal",
+					"normal",
+					"armored"
 				},
 				introText = {
 					"Globule come from far away.",
