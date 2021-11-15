@@ -1,0 +1,6 @@
+Class: Powerup
+
+Properties:
+    Duration (in seconds)
+    Sprite
+    
