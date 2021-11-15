@@ -1,6 +1,7 @@
 Class: Powerup
 
 Properties:
-    Duration (in seconds)
+    Duration (After)
     Sprite
-    
+    Duration2 (Before)
+    Functionality (Slow, Swipe, Explosion, Double Damage)
