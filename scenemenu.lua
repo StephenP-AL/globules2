@@ -67,6 +67,13 @@ local function settingsListener(event)
          composer.gotoScene("sceneSettings",{params = params} )
       end
    end
+
+local function winScreenListener(event)
+   if (event.phase == "ended") then
+      composer.gotoScene("sceneWinScreen");
+   end
+end
+
 local startButton = widget.newButton(
 	{
 		x=display.contentCenterX,
@@ -122,6 +129,20 @@ local levelOneButton = widget.newButton(
       defaultFile= levelbuttonImage
    }
 );
+
+local testWinScreen = widget.newButton(
+   {
+      x = display.contentCenterX,
+      y = display.contentCenterY + 50,
+      id = "testWinScreenBtn",
+      label = "Test Win Screen",
+      onEvent = winScreenListener,
+      defaultFile = levelbuttonImage,
+      width = 150,
+      height = 85
+   }
+);
+
  local settingsCogWheel = widget.newButton(
    {
       x = display.contentWidth-50,
@@ -144,6 +165,7 @@ sceneGroup:insert(background);
 sceneGroup:insert(levelThreeButton);
 sceneGroup:insert(settingsCogWheel)
 sceneGroup:insert(startButton)
+sceneGroup:insert(testWinScreen);
    elseif ( phase == "did" ) then
       -- Called when the scene is now on screen.
       -- Insert code here to make the scene come alive.
