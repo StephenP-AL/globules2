@@ -27,7 +27,8 @@ function scene:show( event )
  
    if ( phase == "will" ) then
       -- Called when the scene is still off screen (but is about to come on screen).
-     	local level = event.params.level
+     	level = event.params.level
+	print("level: "..level)
       	local lvlGlob = system.pathForFile("level/"..level.."/glob.csv")
 	local fileGlob = csv.open(lvlGlob,{header = true})
 	local spawnList = {}
@@ -41,9 +42,11 @@ function scene:show( event )
 	local lvlParams = system.pathForFile("level/"..level.."/params.csv")
 	local fileParams = csv.open(lvlParams,{header = true})
 	initSpawnTimer = 800
+	finalLevel = 0
 	for record in fileParams:lines()
 		do
 			initSpawnTimer = record.spawnTimer
+			finalLevel = record.final
 		end
 
       	local lvlIntro= system.pathForFile("level/"..level.."/intro.csv")
@@ -93,7 +96,7 @@ function scene:show( event )
 
 
 	--Globules
-	local globules = {} --table to reference all globules
+	globules = {} --table to reference all globules
 
 	function scene:resumeGame()
 		print(spawnCount.." resume")
@@ -287,14 +290,14 @@ function scene:show( event )
 	composer.showOverlay("sceneLevelIntro",options)
 
 
-	local spawnIterator = 1
+	spawnIterator = 1
 	print("0. Iterator "..spawnIterator.." Count "..spawnCount)
-	local spawnTimer = initSpawnTimer
+	spawnTimer = initSpawnTimer
 	local function update()
 
-		print("0.1. Iterator "..spawnIterator.." Count "..spawnCount)
+	--	print("0.1. Iterator "..spawnIterator.." Count "..spawnCount)
 		if (pause == true)then
-			print("0.2. Iterator "..spawnIterator.." Count "..spawnCount)
+	--		print("0.2. Iterator "..spawnIterator.." Count "..spawnCount)
 			physics.pause()
 			return
 		end
@@ -332,24 +335,28 @@ function scene:show( event )
 		saturationText.text = "Saturation: "..saturation
 		if (spawnIterator <= spawnCount)then
 			spawnTimer = spawnTimer - 1
-			print("1. Iterator "..spawnIterator.." Count "..spawnCount)
+--			print("1. Iterator "..spawnIterator.." Count "..spawnCount)
 
 			if (spawnTimer == 0) then
-				print("1.1. Iterator "..spawnIterator.." Count "..spawnCount)
+--				print("1.1. Iterator "..spawnIterator.." Count "..spawnCount)
 				spawnGlobule(spawnList[spawnIterator]) 
 				print("Spawn "..spawnIterator)
 				spawnIterator = spawnIterator + 1
 				spawnTimer = initSpawnTimer
 			end
 		elseif spawnIterator > spawnCount then
-			if (#globules == 0 ) then
-				local nextlvl = event.params.level + 1
-				print("level "..nextlvl.." Itt "..spawnIterator)
-				print("2. Iterator "..spawnIterator.." Count "..spawnCount)
-				pause = true
-				spawnIterator = 1
-				params = {level = nextlvl}
-				composer.gotoScene("sceneLevelTransition",{params = params} )
+--			print("Glob "..#globules)
+			if (#globules == 0 and saturation == 0) then
+				print("final: "..finalLevel)
+				if (finalLevel == 0) then
+					local nextlvl = level + 1
+					pause = true
+					spawnIterator = 1
+					params = {level = nextlvl}
+					composer.gotoScene("sceneLevelTransition",{params = params} )
+				else
+					composer.gotoScene("sceneWinScreen")
+				end
 			end
 		end
 		end

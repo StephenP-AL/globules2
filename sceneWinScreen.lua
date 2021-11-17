@@ -136,6 +136,7 @@ function scene:show( event )
    local phase = event.phase
  
    if ( phase == "will" ) then
+	   composer.removeScene("scenePlayField")
       -- Called when the scene is still off screen (but is about to come on screen).
    elseif ( phase == "did" ) then
       -- Called when the scene is now on screen.
