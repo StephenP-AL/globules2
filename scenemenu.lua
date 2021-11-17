@@ -37,7 +37,8 @@ local function startListener(event)
 				level = 1	
 
 			}
-			composer.gotoScene("scenePlayField",{params = params} )
+		--	composer.gotoScene("scenePlayField",{params = params} )
+			composer.gotoScene("sceneLevelTransition",{params = params} )
 		end
 	end
 

@@ -45,7 +45,6 @@ function scene:show( event )
 	
 	introText = event.params.introText
 
-	print("overlay"..introText[1])
 	for index, line in pairs(event.params.introText) do
 		text = display.newText(line,display.contentCenterX,display.contentHeight + index * 100,native.systemFont, 25)
 		transition.to(text,{y = index * 45, time = 10000 + index * 500})
@@ -65,7 +64,6 @@ function scene:show( event )
       		defaultFile= "LevelButtonGlobulesImage_adobespark (1).png"
    	}
 	)
-	print(#event.params.introText)
 	transition.to(closeButton,{y = (#event.params.introText + 1) * 45, time = 13000 + (#event.params.introText + 2) * 500})
 	sceneGroup:insert(closeButton)
 

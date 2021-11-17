@@ -31,11 +31,13 @@ function scene:show( event )
       	local lvlGlob = system.pathForFile("level/"..level.."/glob.csv")
 	local fileGlob = csv.open(lvlGlob,{header = true})
 	local spawnList = {}
+	spawnCount = 0
 	for record in fileGlob:lines()
 		do
-			print(record.type)
 			table.insert(spawnList,record.type)
+			spawnCount = spawnCount + 1
 		end
+		print(spawnCount,spawnCount)
 	local lvlParams = system.pathForFile("level/"..level.."/params.csv")
 	local fileParams = csv.open(lvlParams,{header = true})
 	initSpawnTimer = 800
@@ -50,15 +52,7 @@ function scene:show( event )
 	for record in fileIntro:lines()
 		do
 			table.insert(introList,record.type)
-			print(record.type)
-		end
-		print("start Intro List")
-	for i = 1, 3, 1
-		do
-			print(introList[i])
-		end
-
-
+		end	
       	local pysics = require("physics")
 	physics.start()
 	physics.setGravity(0,0)
@@ -102,6 +96,7 @@ function scene:show( event )
 	local globules = {} --table to reference all globules
 
 	function scene:resumeGame()
+		print(spawnCount.." resume")
 		pause = false
 		physics.start()
 	end
@@ -293,9 +288,13 @@ function scene:show( event )
 
 
 	local spawnIterator = 1
+	print("0. Iterator "..spawnIterator.." Count "..spawnCount)
 	local spawnTimer = initSpawnTimer
 	local function update()
+
+		print("0.1. Iterator "..spawnIterator.." Count "..spawnCount)
 		if (pause == true)then
+			print("0.2. Iterator "..spawnIterator.." Count "..spawnCount)
 			physics.pause()
 			return
 		end
@@ -326,24 +325,31 @@ function scene:show( event )
 		end
 		saturation = sat
 		if (saturation > saturationLimit) then
+			print("Kill")
 			pause = true
 			composer.showOverlay("sceneKillScreen")
 		end
 		saturationText.text = "Saturation: "..saturation
-		if (spawnIterator <= #spawnList)then
+		if (spawnIterator <= spawnCount)then
 			spawnTimer = spawnTimer - 1
+			print("1. Iterator "..spawnIterator.." Count "..spawnCount)
+
 			if (spawnTimer == 0) then
+				print("1.1. Iterator "..spawnIterator.." Count "..spawnCount)
 				spawnGlobule(spawnList[spawnIterator]) 
+				print("Spawn "..spawnIterator)
 				spawnIterator = spawnIterator + 1
 				spawnTimer = initSpawnTimer
 			end
-		else
-			if (#globules == 0) then
+		elseif spawnIterator > spawnCount then
+			if (#globules == 0 ) then
 				local nextlvl = event.params.level + 1
 				print("level "..nextlvl.." Itt "..spawnIterator)
-				
+				print("2. Iterator "..spawnIterator.." Count "..spawnCount)
+				pause = true
+				spawnIterator = 1
 				params = {level = nextlvl}
-				composer.gotoScene("scenePlayField",{params = params} )
+				composer.gotoScene("sceneLevelTransition",{params = params} )
 			end
 		end
 		end
