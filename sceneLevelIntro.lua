@@ -1,6 +1,7 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
 local widget = require("widget") 
+local csv = require("csv")
 
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
@@ -44,6 +45,7 @@ function scene:show( event )
 	
 	introText = event.params.introText
 
+	print("overlay"..introText[1])
 	for index, line in pairs(event.params.introText) do
 		text = display.newText(line,display.contentCenterX,display.contentHeight + index * 100,native.systemFont, 25)
 		transition.to(text,{y = index * 45, time = 10000 + index * 500})

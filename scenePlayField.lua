@@ -1,5 +1,6 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
+local csv = require("csv")
 
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
@@ -26,7 +27,38 @@ function scene:show( event )
  
    if ( phase == "will" ) then
       -- Called when the scene is still off screen (but is about to come on screen).
-     	 
+     	local level = event.params.level
+      	local lvlGlob = system.pathForFile("level/"..level.."/glob.csv")
+	local fileGlob = csv.open(lvlGlob,{header = true})
+	local spawnList = {}
+	for record in fileGlob:lines()
+		do
+			print(record.type)
+			table.insert(spawnList,record.type)
+		end
+	local lvlParams = system.pathForFile("level/"..level.."/params.csv")
+	local fileParams = csv.open(lvlParams,{header = true})
+	initSpawnTimer = 800
+	for record in fileParams:lines()
+		do
+			initSpawnTimer = record.spawnTimer
+		end
+
+      	local lvlIntro= system.pathForFile("level/"..level.."/intro.csv")
+	local fileIntro= csv.open(lvlIntro,{header = true})
+	local introList = {}
+	for record in fileIntro:lines()
+		do
+			table.insert(introList,record.type)
+			print(record.type)
+		end
+		print("start Intro List")
+	for i = 1, 3, 1
+		do
+			print(introList[i])
+		end
+
+
       	local pysics = require("physics")
 	physics.start()
 	physics.setGravity(0,0)
@@ -40,7 +72,7 @@ function scene:show( event )
 	saturationLimit = 500
 	saturation = 0
 	score = 0
-	pause = true
+	pause = true;
 
 	--
 	-- TODO replace these text displays with widgets
@@ -253,14 +285,13 @@ function scene:show( event )
 		local blue = math.random()
 		createGlobule(type, testSize,startX,startY,deltaX,deltaY,red,green,blue)
    	end
-
 	local options = {
 		isModal = true,
-		params = {introText = event.params.introText}
+		params = {introText = introList}
 	}
 	composer.showOverlay("sceneLevelIntro",options)
 
-	local initSpawnTimer = event.params.spawnTimer
+
 	local spawnIterator = 1
 	local spawnTimer = initSpawnTimer
 	local function update()
@@ -299,12 +330,20 @@ function scene:show( event )
 			composer.showOverlay("sceneKillScreen")
 		end
 		saturationText.text = "Saturation: "..saturation
-		if (spawnIterator <= #event.params.spawnList)then
+		if (spawnIterator <= #spawnList)then
 			spawnTimer = spawnTimer - 1
 			if (spawnTimer == 0) then
-				spawnGlobule(event.params.spawnList[spawnIterator]) --TODO:Replace this with a set spawn table passed as param
+				spawnGlobule(spawnList[spawnIterator]) 
 				spawnIterator = spawnIterator + 1
 				spawnTimer = initSpawnTimer
+			end
+		else
+			if (#globules == 0) then
+				local nextlvl = event.params.level + 1
+				print("level "..nextlvl.." Itt "..spawnIterator)
+				
+				params = {level = nextlvl}
+				composer.gotoScene("scenePlayField",{params = params} )
 			end
 		end
 		end
