@@ -35,6 +35,7 @@ local function startListener(event)
 		then
 			local params = {
 				spawnTimer = 80,
+            levelParTimer = 120,
 				spawnList = {
 					"normal",
 					"armored",
@@ -51,7 +52,7 @@ local function startListener(event)
 					"Tap globule to make smol.",
 					"Tap smol to make solute."
 
-				}
+				},
 
 			}
 			composer.gotoScene("scenePlayField",{params = params} )

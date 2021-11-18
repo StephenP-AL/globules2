@@ -41,6 +41,7 @@ function scene:show( event )
 	saturation = 0
 	score = 0
 	pause = true
+	hasLevelStarted = false;
 
 	--
 	-- TODO replace these text displays with widgets
@@ -50,6 +51,11 @@ function scene:show( event )
 	local scoreText = display.newText("Score: 0",0,-5)
 	scoreText.anchorX = 0
 	sceneGroup:insert(scoreText)
+	parTimer = event.params.levelParTimer;
+	updatedParTimer = parTimer;
+	local parTimerText = display.newText("Time Bonus: "..parTimer, display.contentWidth - 130, -25);
+	parTimerText.anchorX = 0;
+	sceneGroup:insert(parTimerText);
 
 	--Field boundries
 	local boundTop = display.newRect(0,0,display.contentWidth,0)
@@ -69,9 +75,19 @@ function scene:show( event )
 	--Globules
 	local globules = {} --table to reference all globules
 
+	local function countDownTimer()
+		if hasLevelStarted == false then
+			return
+		end
+		updatedParTimer = updatedParTimer - 1;
+		parTimerText.text = "Time Bonus: "..updatedParTimer;
+	end
+
 	function scene:resumeGame()
 		pause = false
 		physics.start()
+		timer.performWithDelay(1000, countDownTimer, parTimer + 1);
+
 	end
 	function addScore(points)
 		score = score + points
@@ -254,6 +270,24 @@ function scene:show( event )
 		createGlobule(type, testSize,startX,startY,deltaX,deltaY,red,green,blue)
    	end
 
+	local function calculateScoreBonus(finalScore, currentTimeBonus, totalParTime)
+
+		if (currentTimeBonus >= (totalParTime / 1.5)) then
+			return finalScore * 10;
+		else if (currentTimeBonus >= (totalParTime / 2)) then
+			return finalScore * 5;
+		else if (currentTimeBonus >= (totalParTime / 4)) then
+			return finalScore * 3;
+		else if (currentTimeBonus > 0) then
+			return finalScore * 2;
+		else
+			return finalScore;
+		end
+		end
+		end
+	end
+	end
+
 	local options = {
 		isModal = true,
 		params = {introText = event.params.introText}
@@ -291,12 +325,17 @@ function scene:show( event )
 					globule.jump = math.random() * 200
 				end
 			end
-
+			hasLevelStarted = true;
 		end
 		saturation = sat
 		if (saturation > saturationLimit) then
-			pause = true
+			pause = true			
 			composer.showOverlay("sceneKillScreen")
+		end
+		if (saturation == 0 and hasLevelStarted == true) then
+			pause = true;
+			score = calculateScoreBonus(score, updatedParTimer, parTimer);
+			composer.gotoScene("sceneWinScreen");
 		end
 		saturationText.text = "Saturation: "..saturation
 		if (spawnIterator <= #event.params.spawnList)then
