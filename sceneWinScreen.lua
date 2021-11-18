@@ -1,5 +1,6 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
+local widget = require("widget")
  
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
@@ -60,7 +61,7 @@ function scene:create( event )
    local globeSheet = graphics.newImageSheet("globe-spritesheet.png", globeOpt);
 
    local globeSeqData = {
-       { name = "globeSpin", start = 1, count = 36, time = 2500 }
+       { name = "globeSpin", start = 1, count = 36, time = 7500 }
    }
 
    local globeAnim = display.newSprite(globeSheet, globeSeqData);
@@ -72,7 +73,58 @@ function scene:create( event )
    globeAnim.y = display.contentCenterY;
    globeAnim:setSequence("globeSpin");
    globeAnim:play();
- 
+-- animation
+ 	function squishX(obj)
+		transition.to(obj,{transition = easing.inOutSine, xScale = .95, yScale = 1.05, time = 3500, onComplete = squishY, rotation = 10})
+	end
+
+	function squishY(obj)
+		transition.to(obj,{transition = easing.inOutSine, yScale = .95, xScale = 1.05, time = 3500, onComplete = squishX, rotation = 10})
+	end
+	function restore(obj)
+		transition.to(obj,{transition = easing.inOutSine,xScale = 1, yScale = 1, time = 20000,onComplete = squishX})
+	end
+	function closeListener(event)
+		if (event.phase == "ended")then
+			composer.gotoScene("scenemenu")
+		end
+	end
+
+   local solute = display.newCircle(display.contentCenterX,display.contentCenterY,display.contentWidth / 2)
+   sceneGroup:insert(solute)
+   transition.to(solute,{transition = easing.inOutSine, xScale = .01, yScale = .01, time = 1,onComplete = restore})
+   solute:setFillColor(.4,.4,.4,.4)
+
+   local message= {
+	   "Globule is become solute.",
+	   "Solute is much big.",
+	   "Solute is become all.",
+	   "You is helper; you is solute"
+   }
+	for index, line in pairs(message) do
+		text = display.newText(line,display.contentCenterX,display.contentHeight + index * 100,native.systemFont, 25)
+		transition.to(text,{y = index * 45, time = 10000 + index * 500})
+		sceneGroup:insert(text)
+	end
+	local closeButton= widget.newButton(
+   	{
+      		x = display.contentCenterX,
+		y = display.contentHeight + #message * 110,
+      		id = "closeButton",
+      		label = "Close",
+      		labelColor = { default={ 1, 0.8, 0 }, over={ 0.2, 1, 1} },
+      		onEvent = closeListener,
+      		fontSize = 30, 
+      		width = 150,
+      		height = 85,
+      		defaultFile= "LevelButtonGlobulesImage_adobespark (1).png"
+   	}
+	)
+	transition.to(closeButton,{y = (#message + 1) * 45, time = 13000 + (#message + 2) * 500})
+	sceneGroup:insert(closeButton)
+
+
+
    -- Initialize the scene here.
    -- Example: add display objects to "sceneGroup", add touch listeners, etc.
 end
