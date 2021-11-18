@@ -1,5 +1,9 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
+local DoubleDamage = require("DoubleDamage");
+local Slasher = require("Slasher");
+local Bomb = require("Bomb");
+local BombBlastCircle = require("BombBlastCircle");
 
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
@@ -42,6 +46,13 @@ function scene:show( event )
 	score = 0
 	pause = true
 	hasLevelStarted = false;
+	damageOutput = 1;
+	
+	--Powerup instances
+	dd = nil;
+	bomb = nil;
+	bombBlastRadius = nil;
+	powerupTimer = nil;
 
 	--
 	-- TODO replace these text displays with widgets
@@ -75,12 +86,107 @@ function scene:show( event )
 	--Globules
 	local globules = {} --table to reference all globules
 
+	local function ddRemoveNoClick(event)
+		damageOutput = 1;
+		dd.shape:removeSelf();
+		dd = nil;
+	end
+	
+	local function bombRemoveNoClick(event)
+		bomb.shape:removeSelf();
+		bomb = nil;
+	end
+
+	local function ddRemove(event)
+		damageOutput = 1;
+		dd = nil;
+	end
+
+	local function bombRemove(event)
+		bombBlastRadius.shape:removeSelf();
+		bombBlastRadius = nil;
+	end
+
+	local function ddActivate(event)
+		timer.cancel(powerupTimer);
+		dd.shape:removeSelf();
+		local activateTxt = display.newText(dd.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 24);
+		sceneGroup:insert(activateTxt);
+		dd:activate();
+
+		timer.performWithDelay(2000, function () activateTxt:removeSelf() activateTxt = nil end)
+		timer.performWithDelay(5000, ddRemove);
+
+		return true;
+	end
+
+	local function bombActivate(event)
+		timer.cancel(powerupTimer);
+
+		local xVal = bomb.shape.xPos;
+		local yVal = bomb.shape.yPos;
+
+		bomb.shape:removeSelf();
+
+		bombBlastRadius = BombBlastCircle:new({xPos=xVal, yPos=yVal});
+		bombBlastRadius:spawn();
+		sceneGroup:insert(bombBlastRadius.shape);
+
+		local activateTxt = display.newText(bombBlastRadius.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 24);
+		sceneGroup:insert(activateTxt);
+		--dd:activate();
+
+		timer.performWithDelay(2000, function () activateTxt:removeSelf() activateTxt = nil end)
+		timer.performWithDelay(5000, bombRemove);
+
+		return true;
+	end
+
 	local function countDownTimer()
 		if hasLevelStarted == false then
 			return
 		end
 		updatedParTimer = updatedParTimer - 1;
 		parTimerText.text = "Time Bonus: "..updatedParTimer;
+
+		if (updatedParTimer == parTimer - 20) then
+			dd = DoubleDamage:new();
+			dd:spawn();
+			sceneGroup:insert(dd.shape);
+			dd.shape:addEventListener("touch", ddActivate);
+
+			powerupTimer = timer.performWithDelay(5000, ddRemoveNoClick);
+
+		end
+
+		if (updatedParTimer == parTimer - 10) then
+			bomb = Bomb:new();
+			bomb:spawn();
+			sceneGroup:insert(bomb.shape);
+			bomb.shape:addEventListener("touch", bombActivate);
+
+			powerupTimer = timer.performWithDelay(5000, bombRemoveNoClick);
+
+		end
+	end
+
+	local function globCollision(event)
+		if (event.phase == "began") then
+			if (bombBlastRadius ~= nil) then
+				if (event.other == bombBlastRadius.shape) then
+					if (event.target.hp > 0) then
+						event.target.hp = event.target.hp - damageOutput;
+					--TODO: need a visual and audio indicator of hit
+					addScore(1)
+					elseif (event.target.size < 21) then
+					event.target.delete = true
+						event.target:removeSelf()
+					score = score + 4
+					scoreText.text = "Score: "..score
+				end
+			end
+		end
+	end
 	end
 
 	function scene:resumeGame()
@@ -95,7 +201,7 @@ function scene:show( event )
 	end
 	function tapGlobule(event)
         	if (event.target.hp > 0) then
-		        event.target.hp = event.target.hp - 1
+		        event.target.hp = event.target.hp - damageOutput;
 			--TODO: need a visual and audio indicator of hit
 			addScore(1)
 		elseif (event.target.size < 21) then
@@ -256,6 +362,8 @@ function scene:show( event )
 		else
 			glob.strokeWidth = 2
 		end
+
+		group:addEventListener("collision", globCollision);
 	end
 
 	local function spawnGlobule(type)
