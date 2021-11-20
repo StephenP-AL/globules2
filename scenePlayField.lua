@@ -291,8 +291,8 @@ function scene:show( event )
 
 
 	spawnIterator = 1
-	print("0. Iterator "..spawnIterator.." Count "..spawnCount)
 	spawnTimer = initSpawnTimer
+	print("level spawn timer: "..initSpawnTimer)
 	local function update()
 
 	--	print("0.1. Iterator "..spawnIterator.." Count "..spawnCount)
@@ -339,13 +339,13 @@ function scene:show( event )
 
 			if (spawnTimer == 0) then
 --				print("1.1. Iterator "..spawnIterator.." Count "..spawnCount)
+				print("Spawning. Level timer: "..initSpawnTimer.." current timer "..spawnTimer)
 				spawnGlobule(spawnList[spawnIterator]) 
 				print("Spawn "..spawnIterator)
 				spawnIterator = spawnIterator + 1
 				spawnTimer = initSpawnTimer
 			end
 		elseif spawnIterator > spawnCount then
---			print("Glob "..#globules)
 			if (#globules == 0 and saturation == 0) then
 				print("final: "..finalLevel)
 				if (finalLevel == "0") then
