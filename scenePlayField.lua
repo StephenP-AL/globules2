@@ -348,13 +348,14 @@ function scene:show( event )
 --			print("Glob "..#globules)
 			if (#globules == 0 and saturation == 0) then
 				print("final: "..finalLevel)
-				if (finalLevel == 0) then
+				if (finalLevel == "0") then
 					local nextlvl = level + 1
 					pause = true
 					spawnIterator = 1
 					params = {level = nextlvl}
 					composer.gotoScene("sceneLevelTransition",{params = params} )
-				else
+				elseif (finalLevel == "1") then
+					print(finalLevel)
 					composer.gotoScene("sceneWinScreen")
 				end
 			end
