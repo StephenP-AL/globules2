@@ -1,9 +1,11 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
-local background2 = display.newImageRect("backgroundSettings2.jpg", display.contentWidth*2.2 , display.contentHeight*2.2 )
+local background = display.newImageRect("settingBackground.jpg", 1000, 1000 )
 local musicImage = "musicImage..png"
 local musicOffImage= "musicoffImage2.png"
 local backButtonImage = "backbuttonimage.png";
+local widget = require("widget")
+local levelbuttonImage = "LevelButtonGlobulesImage_adobespark (1).png"
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
 -- unless "composer.removeScene()" is called.
@@ -15,28 +17,9 @@ local backButtonImage = "backbuttonimage.png";
  
 -- "scene:create()"
 function scene:create( event )
-
-   local sceneGroup = self.view
-   local function sliderListener( event )
-      print( "Slider Volume at " .. event.value .. "%" )
-  end
    
-  local options = {
-      frames = {
-          { x=0, y=0, width=36, height=48 },
-          { x=40, y=0, width=36, height =48 },
-          { x=80, y=0, width=36, height=48 },
-          { x=124, y=0, width=36, height = 48 },
-          { x=168, y=0, width=64, height= 48 }
-      },
-      sheetContentWidth = 232,
-      sheetContentHeight = 48
-  }
-  local widget = require("widget")
-  local function onMusicPress (event)
-    
-   end
-
+   local sceneGroup = self.view
+   
   
 end
  
@@ -45,9 +28,95 @@ function scene:show( event )
  
    local sceneGroup = self.view
    local phase = event.phase
- 
+   local function backListener(event)
+     
+            composer.gotoScene("scenemenu" )
+  
+      end
+
+      function map (value, istart, istop, ostart, ostop) 
+         return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
+       end
+      local function sliderListener( event )
+         print( "Slider Volume at " .. event.value .. "%" )
+         local value=map(event.value,0,100,0,1)
+         composer.setVariable("setVolume",value)
+      end
+      local function onSwitchPress( event )
+         composer.setVariable("setVolume",0)
+      end
+      
+     
+     local widget = require("widget")
+     local function onMusicPress (event)
+       
+      end
+      local settingTop= display.newRoundedRect(display.contentCenterX,10,150,50,20)
+      settingTop:setFillColor(0.2, 1, 1)
+      local settingText=display.newText("Setting",display.contentCenterX,10,native.systemFont, 30)
+      settingText:setFillColor(1,0.5,0.5)
+      settingTop.strokeWidth = 4;
+      settingTop:setStrokeColor(1,0.5,0.4);
+
+      local musicBox= display.newRoundedRect(display.contentCenterX-90,160,90,30,20)
+      musicBox:setFillColor( 1, 0.8, 0.1 )
+      local musicText=display.newText("Volume",display.contentCenterX-90,160,native.systemFont, 20)
+      musicText:setFillColor(1,0.5,0.5)
+  
+      local musicBox1= display.newRoundedRect(display.contentCenterX-90,210,120,30,20)
+      musicBox1:setFillColor( 1, 0.8, 0.1 )
+      local musicText1=display.newText("Music Off",display.contentCenterX-90,210,native.systemFont, 20)
+      musicText1:setFillColor(1,0.5,0.5)
+
+      local slider1= widget.newSlider(
+          {
+             x = display.contentCenterX+75,
+             y = 160,
+             width = 130,
+             value=0,
+             listener = sliderListener
+          })
+
+          local onOffSwitch = widget.newSwitch(
+            {
+                left = 250,
+                top = 200,
+                style = "onOff",
+                id = "onOffSwitch",
+                onPress = onSwitchPress
+            }
+        )
+         
+        
+        local backButton = widget.newButton(
+         {
+            x = display.contentCenterX,
+            y = 470,
+            id = "startButton",
+            label = "Close",
+            labelColor = { default={ 1, 0.8, 0 }, over={ 0.2, 1, 1} },
+            onEvent = backListener,
+            fontSize = 30, 
+            width = 150,
+            height = 85,
+            defaultFile= levelbuttonImage
+         }
+      );
+      
+      sceneGroup:insert(background)
+      sceneGroup:insert(backButton)
+      sceneGroup:insert(settingTop)
+      sceneGroup:insert(settingText)
+      sceneGroup:insert(musicBox)
+      sceneGroup:insert(musicText)
+      sceneGroup:insert(slider1)
+      sceneGroup:insert(onOffSwitch)
+    
+
+      
    if ( phase == "will" ) then
-      -- Called when the scene is still off screen (but is about to come on screen).
+      
+
    elseif ( phase == "did" ) then
       -- Called when the scene is now on screen.
       -- Insert code here to make the scene come alive.
