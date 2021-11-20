@@ -1,9 +1,13 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
+--<<<<<<< HEAD
 local DoubleDamage = require("DoubleDamage");
 local Slasher = require("Slasher");
 local Bomb = require("Bomb");
 local BombBlastCircle = require("BombBlastCircle");
+--=======
+local csv = require("csv")
+-->>>>>>> levels
 
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
@@ -30,7 +34,35 @@ function scene:show( event )
  
    if ( phase == "will" ) then
       -- Called when the scene is still off screen (but is about to come on screen).
-     	 
+     	level = event.params.level
+	print("level: "..level)
+      	local lvlGlob = system.pathForFile("level/"..level.."/glob.csv")
+	local fileGlob = csv.open(lvlGlob,{header = true})
+	local spawnList = {}
+	spawnCount = 0
+	for record in fileGlob:lines()
+		do
+			table.insert(spawnList,record.type)
+			spawnCount = spawnCount + 1
+		end
+		print(spawnCount,spawnCount)
+	local lvlParams = system.pathForFile("level/"..level.."/params.csv")
+	local fileParams = csv.open(lvlParams,{header = true})
+	initSpawnTimer = 800
+	finalLevel = 0
+	for record in fileParams:lines()
+		do
+			initSpawnTimer = record.spawnTimer
+			finalLevel = record.final
+		end
+
+      	local lvlIntro= system.pathForFile("level/"..level.."/intro.csv")
+	local fileIntro= csv.open(lvlIntro,{header = true})
+	local introList = {}
+	for record in fileIntro:lines()
+		do
+			table.insert(introList,record.type)
+		end	
       	local pysics = require("physics")
 	physics.start()
 	physics.setGravity(0,0)
@@ -44,6 +76,7 @@ function scene:show( event )
 	saturationLimit = 500
 	saturation = 0
 	score = 0
+--<<<<<<< HEAD
 	pause = true
 	hasLevelStarted = false;
 	damageOutput = 1;
@@ -53,7 +86,10 @@ function scene:show( event )
 	bomb = nil;
 	bombBlastRadius = nil;
 	powerupTimer = nil;
+--=======
 
+	pause = true;
+-->>>>>>> levels
 	--
 	-- TODO replace these text displays with widgets
 	local saturationText = display.newText("Saturation: 0",0,-25)
@@ -84,7 +120,7 @@ function scene:show( event )
 
 
 	--Globules
-	local globules = {} --table to reference all globules
+	globules = {} --table to reference all globules
 
 	local function ddRemoveNoClick(event)
 		damageOutput = 1;
@@ -162,7 +198,8 @@ function scene:show( event )
 		if (updatedParTimer == parTimer - 10) then
 			bomb = Bomb:new();
 			bomb:spawn();
-			sceneGroup:insert(bomb.shape);
+			print("Bomb: ",bomb)
+			sceneGroup:insert(bomb);
 			bomb.shape:addEventListener("touch", bombActivate);
 
 			powerupTimer = timer.performWithDelay(5000, bombRemoveNoClick);
@@ -190,6 +227,7 @@ function scene:show( event )
 	end
 
 	function scene:resumeGame()
+		print(spawnCount.." resume")
 		pause = false
 		physics.start()
 		timer.performWithDelay(1000, countDownTimer, parTimer + 1);
@@ -377,6 +415,7 @@ function scene:show( event )
 		local blue = math.random()
 		createGlobule(type, testSize,startX,startY,deltaX,deltaY,red,green,blue)
    	end
+--<<<<<<< HEAD
 
 	local function calculateScoreBonus(finalScore, currentTimeBonus, totalParTime)
 
@@ -396,16 +435,20 @@ function scene:show( event )
 	end
 	end
 
+--=======
+-->>>>>>> levels
 	local options = {
 		isModal = true,
-		params = {introText = event.params.introText}
+		params = {introText = introList}
 	}
 	composer.showOverlay("sceneLevelIntro",options)
 
-	local initSpawnTimer = event.params.spawnTimer
-	local spawnIterator = 1
-	local spawnTimer = initSpawnTimer
+
+	spawnIterator = 1
+	spawnTimer = initSpawnTimer
+	print("level spawn timer: "..initSpawnTimer)
 	local function update()
+
 		if (pause == true)then
 			physics.pause()
 			return
@@ -437,21 +480,47 @@ function scene:show( event )
 		end
 		saturation = sat
 		if (saturation > saturationLimit) then
-			pause = true			
+			pause = true
 			composer.showOverlay("sceneKillScreen")
 		end
+
+		--[[ Incompatible with level changes
 		if (saturation == 0 and hasLevelStarted == true) then
 			pause = true;
 			score = calculateScoreBonus(score, updatedParTimer, parTimer);
 			composer.gotoScene("sceneWinScreen");
 		end
+		]]
 		saturationText.text = "Saturation: "..saturation
-		if (spawnIterator <= #event.params.spawnList)then
+		if (spawnIterator <= spawnCount)then
 			spawnTimer = spawnTimer - 1
+--			print("1. Iterator "..spawnIterator.." Count "..spawnCount)
+
 			if (spawnTimer == 0) then
-				spawnGlobule(event.params.spawnList[spawnIterator]) --TODO:Replace this with a set spawn table passed as param
+--				print("1.1. Iterator "..spawnIterator.." Count "..spawnCount)
+				print("Spawning. Level timer: "..initSpawnTimer.." current timer "..spawnTimer)
+				spawnGlobule(spawnList[spawnIterator]) 
+				print("Spawn "..spawnIterator)
 				spawnIterator = spawnIterator + 1
 				spawnTimer = initSpawnTimer
+			end
+		elseif spawnIterator > spawnCount then
+			if (#globules == 0 and saturation == 0) then
+				
+				score = calculateScoreBonus(score, updatedParTimer, parTimer);
+				print("final: "..finalLevel)
+				if (finalLevel == "0") then
+					local nextlvl = level + 1
+					pause = true
+					spawnIterator = 1
+					params = {
+						levelParTimer = 120,
+						level = nextlvl}
+					composer.gotoScene("sceneLevelTransition",{params = params} )
+				elseif (finalLevel == "1") then
+					print(finalLevel)
+					composer.gotoScene("sceneWinScreen")
+				end
 			end
 		end
 		end

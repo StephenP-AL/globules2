@@ -1,6 +1,7 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
 local widget = require("widget") 
+local csv = require("csv")
 
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
@@ -63,7 +64,6 @@ function scene:show( event )
       		defaultFile= "LevelButtonGlobulesImage_adobespark (1).png"
    	}
 	)
-	print(#event.params.introText)
 	transition.to(closeButton,{y = (#event.params.introText + 1) * 45, time = 13000 + (#event.params.introText + 2) * 500})
 	sceneGroup:insert(closeButton)
 

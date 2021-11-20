@@ -40,6 +40,7 @@ local function startListener(event)
 	if (event.phase =="ended")
 		then
 			local params = {
+--<<<<<<< HEAD
 				spawnTimer = 80,
             levelParTimer = 120,
 				spawnList = {
@@ -59,9 +60,14 @@ local function startListener(event)
 					"Tap smol to make solute."
 
 				},
+--=======
+				level = 1	
+-->>>>>>> levels
+
 
 			}
-			composer.gotoScene("scenePlayField",{params = params} )
+		--	composer.gotoScene("scenePlayField",{params = params} )
+			composer.gotoScene("sceneLevelTransition",{params = params} )
 		end
 	end
 
