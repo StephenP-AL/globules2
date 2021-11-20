@@ -4,6 +4,10 @@ local widget = require("widget")
 local background = display.newImageRect("globulesBackgroundImage.jpg", display.contentWidth*2.2 , display.contentHeight*2.2 )
 local levelbuttonImage = "LevelButtonGlobulesImage_adobespark (1).png"
 local settingsCogWheelImage = "cogWheelImage2.png"
+composer.setVariable("setVolume",100)
+local music= audio.loadSound("backgroundMusic.mp3")
+local playMusic=audio.play(music,{chanel=1,loops=0})
+
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
 -- unless "composer.removeScene()" is called.
@@ -30,6 +34,8 @@ function scene:show( event )
  
    if ( phase == "will" ) then
       -- Called when the scene is still off screen (but is about to come on screen).
+
+
 local function startListener(event)
 	if (event.phase =="ended")
 		then
@@ -75,22 +81,11 @@ local function winScreenListener(event)
 end
 
 local startButton = widget.newButton(
-	{
-		x=display.contentCenterX,
-		y=100,
-		label="Start",
-		width=180,
-		height=30,
-		shape="roundedRect",
-		onEvent=startListener
-	}
-	)
-local levelOneButton = widget.newButton(
    {
       x = display.contentCenterX,
       y = display.contentCenterY-150,
-      id = "levelOneButton",
-      label = "Level 1",
+      id = "startButton",
+      label = "Start",
       labelColor = { default={ 1, 0.8, 0 }, over={ 0.2, 1, 1} },
       onEvent = startListener,
       fontSize = 30, 
@@ -100,27 +95,27 @@ local levelOneButton = widget.newButton(
    }
 );
    
-     local levelTwoButton = widget.newButton(
+   local introButton = widget.newButton(
    {
       x = display.contentCenterX,
       y = display.contentCenterY-75,
-      id = "levelTwoButton",
-      label = "Level 2",
+      id = "introduction",
+      label = "Introduction",
       labelColor = { default={ 0.2, 1, 0 }, over={ 0.2, 1, 1} },
       onEvent = startListener,
       fontSize = 30, 
-      width = 150,
+      width = 200,
       height = 85,
       defaultFile= levelbuttonImage
    }
 );
   
-       local levelThreeButton = widget.newButton(
+   local levelButton = widget.newButton(
    {
       x = display.contentCenterX,
       y = display.contentCenterY,
-      id = "levelThreeButton",
-      label = "Level 3",
+      id = "level",
+      label = "Level",
       labelColor = { default={ 0.2, 0.2, 1 }, over={ 0.2, 1, 1} },
       onEvent = startListener,
       fontSize = 30, 
@@ -133,39 +128,44 @@ local levelOneButton = widget.newButton(
 local testWinScreen = widget.newButton(
    {
       x = display.contentCenterX,
-      y = display.contentCenterY + 50,
+      y = display.contentCenterY +75,
       id = "testWinScreenBtn",
       label = "Test Win Screen",
       onEvent = winScreenListener,
+      labelColor = { default={ 1, 0.8, 0 }, over={ 0.2, 1, 1} },
       defaultFile = levelbuttonImage,
-      width = 150,
+      fontSize = 30, 
+      width = 270,
       height = 85
    }
 );
 
  local settingsCogWheel = widget.newButton(
    {
-      x = display.contentWidth-50,
-      y = display.contentHeight,
-      id = "settingsCogWheel",
-      label = "",
-      labelColor = { default={ 0.2, 0.2, 1 }, over={ 0.2, 1, 1} },
+      
+      x = display.contentCenterX,
+      y = display.contentCenterY+75+75,
+      id = "Setting",
+      label = "Setting",
+      labelColor = { default={ 0.2, 1, 0 }, over={ 0.2, 1, 1} },
       onEvent = settingsListener,
       fontSize = 30, 
-      width = 90,
-      height = 90,
-      defaultFile= settingsCogWheelImage
+      width = 170,
+      height = 85,
+      defaultFile = levelbuttonImage,
    }
 );
 
+audio.setVolume(composer.getVariable("setVolume"),{channel=1})
 
+-- sceneGroup:insert(playMusic);
 sceneGroup:insert(background);
-  sceneGroup:insert(levelTwoButton);
-   sceneGroup:insert(levelOneButton);
-sceneGroup:insert(levelThreeButton);
-sceneGroup:insert(settingsCogWheel)
-sceneGroup:insert(startButton)
+sceneGroup:insert(introButton);
+sceneGroup:insert(startButton);
+sceneGroup:insert(levelButton);
+sceneGroup:insert(settingsCogWheel);
 sceneGroup:insert(testWinScreen);
+
    elseif ( phase == "did" ) then
       -- Called when the scene is now on screen.
       -- Insert code here to make the scene come alive.
