@@ -1,13 +1,8 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
-local widget = require("widget")
-local background = display.newImageRect("globulesBackgroundImage.jpg", display.contentWidth*2.2 , display.contentHeight*2.2 )
 local levelbuttonImage = "LevelButtonGlobulesImage_adobespark (1).png"
-local settingsCogWheelImage = "cogWheelImage2.png"
-composer.setVariable("setVolume",100)
-local music= audio.loadStream("backgroundMusic.mp3",{loops = -1})
-local playMusic=audio.play(music,{chanel=1,loops=-1})
 
+local widget = require("widget")
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
 -- unless "composer.removeScene()" is called.
@@ -33,128 +28,136 @@ function scene:show( event )
    local phase = event.phase
  
    if ( phase == "will" ) then
-      -- Called when the scene is still off screen (but is about to come on screen).
 
 
-local function startListener(event)
+	   local loadlvl = 1 --Variable for selecting the level
+local background = display.newImageRect("globulesBackgroundImage.jpg", display.contentWidth*2.2 , display.contentHeight*2.2 )
+sceneGroup:insert(background);
+
+local function ch1 (event)
 	if (event.phase =="ended")
 		then
 			local params = {
             			levelParTimer = 120,
-				level = 1	
+				level =1 
 			}
 			composer.gotoScene("sceneLevelTransition",{params = params} )
 		end
 	end
-local function chListener(event)
-	if (event.phase == "ended")
+
+	local function ch2 (event)
+	if (event.phase =="ended")
 		then
-			composer.gotoScene("sceneChapters")
+			local params = {
+            			levelParTimer = 120,
+				level =4 
+			}
+			composer.gotoScene("sceneLevelTransition",{params = params} )
 		end
 	end
-local function settingsListener(event)
-   if (event.phase =="ended")
-      then
-         local params = {
-            spawnTimer = 8800
-         }
-         composer.gotoScene("sceneSettings",{params = params} )
-      end
-   end
---[[ moved to chapters
-local function winScreenListener(event)
-   if (event.phase == "ended") then
-      composer.gotoScene("sceneWinScreen");
-   end
-end
-]]
-local startButton = widget.newButton(
+local function ch3 (event)
+	if (event.phase =="ended")
+		then
+			local params = {
+            			levelParTimer = 120,
+				level =7 
+			}
+			composer.gotoScene("sceneLevelTransition",{params = params} )
+		end
+	end
+local function ch4 (event)
+	if (event.phase =="ended")
+		then
+			local params = {
+            			levelParTimer = 120,
+				level =10
+			}
+			composer.gotoScene("sceneLevelTransition",{params = params} )
+		end
+	end
+local function win(event)
+	if (event.phase == "ended")
+		then
+			composer.gotoScene("sceneWinScreen")
+		end
+	end
+local chButton1 = widget.newButton(
+   {
+      x = display.contentCenterX,
+      y = display.contentCenterY-250,
+      id = "ch1",
+      label = "Chapter 1",
+      labelColor = { default={ 1, 0.8, 0 }, over={ 0.2, 1, 1} },
+      onEvent = ch1,
+      fontSize = 30, 
+      width = 150,
+      height = 85,
+      defaultFile= levelbuttonImage
+   }
+);
+local chButton2 = widget.newButton(
    {
       x = display.contentCenterX,
       y = display.contentCenterY-150,
-      id = "startButton",
-      label = "Start",
+      id = "ch2",
+      label = "Chapter 2",
       labelColor = { default={ 1, 0.8, 0 }, over={ 0.2, 1, 1} },
-      onEvent = startListener,
+      onEvent = ch2,
       fontSize = 30, 
       width = 150,
       height = 85,
       defaultFile= levelbuttonImage
    }
 );
- --[[ Redundant  
-   local introButton = widget.newButton(
+local chButton3 = widget.newButton(
    {
       x = display.contentCenterX,
-      y = display.contentCenterY-75,
-      id = "introduction",
-      label = "Introduction",
-      labelColor = { default={ 0.2, 1, 0 }, over={ 0.2, 1, 1} },
-      onEvent = startListener,
-      fontSize = 30, 
-      width = 200,
-      height = 85,
-      defaultFile= levelbuttonImage
-   }
-);
-]] 
-   local levelButton = widget.newButton(
-   {
-      x = display.contentCenterX,
-      y = display.contentCenterY,
-      id = "level",
-      label = "Chapters",
-      labelColor = { default={ 0.2, 0.2, 1 }, over={ 0.2, 1, 1} },
-      onEvent = chListener,
+      y = display.contentCenterY-50,
+      id = "ch3",
+      label = "Chapter 3",
+      labelColor = { default={ 1, 0.8, 0 }, over={ 0.2, 1, 1} },
+      onEvent = ch3,
       fontSize = 30, 
       width = 150,
       height = 85,
       defaultFile= levelbuttonImage
    }
 );
---[[ moved to chapters
-local testWinScreen = widget.newButton(
+local chButton4 = widget.newButton(
    {
       x = display.contentCenterX,
-      y = display.contentCenterY +75,
-      id = "testWinScreenBtn",
-      label = "Test Win Screen",
-      onEvent = winScreenListener,
+      y = display.contentCenterY+50,
+      id = "ch4",
+      label = "Chapter 4",
       labelColor = { default={ 1, 0.8, 0 }, over={ 0.2, 1, 1} },
-      defaultFile = levelbuttonImage,
+      onEvent = ch4,
       fontSize = 30, 
-      width = 270,
-      height = 85
-   }
-);
-]]
-
- local settingsCogWheel = widget.newButton(
-   {
-      
-      x = display.contentCenterX,
-      y = display.contentCenterY+75+75,
-      id = "Setting",
-      label = "Setting",
-      labelColor = { default={ 0.2, 1, 0 }, over={ 0.2, 1, 1} },
-      onEvent = settingsListener,
-      fontSize = 30, 
-      width = 170,
+      width = 150,
       height = 85,
-      defaultFile = levelbuttonImage,
+      defaultFile= levelbuttonImage
    }
 );
+local winButton = widget.newButton(
+   {
+      x = display.contentCenterX,
+      y = display.contentCenterY+150,
+      id = "win",
+      label = "Ending",
+      labelColor = { default={ 1, 0.8, 0 }, over={ 0.2, 1, 1} },
+      onEvent = win,
+      fontSize = 30, 
+      width = 150,
+      height = 85,
+      defaultFile= levelbuttonImage
+   }
+);
+sceneGroup:insert(chButton1)
+sceneGroup:insert(chButton2)
+sceneGroup:insert(chButton3)
+sceneGroup:insert(chButton4)
+sceneGroup:insert(winButton)
 
-audio.setVolume(composer.getVariable("setVolume"),{channel=1})
-
--- sceneGroup:insert(playMusic);
-sceneGroup:insert(background);
---sceneGroup:insert(introButton);
-sceneGroup:insert(startButton);
-sceneGroup:insert(levelButton);
-sceneGroup:insert(settingsCogWheel);
---sceneGroup:insert(testWinScreen);
-
+      -- Called when the scene is still off screen (but is about to come on screen).
    elseif ( phase == "did" ) then
       -- Called when the scene is now on screen.
       -- Insert code here to make the scene come alive.

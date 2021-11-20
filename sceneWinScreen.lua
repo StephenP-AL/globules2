@@ -93,7 +93,7 @@ function scene:create( event )
    local solute = display.newCircle(display.contentCenterX,display.contentCenterY,display.contentWidth / 2)
    sceneGroup:insert(solute)
    transition.to(solute,{transition = easing.inOutSine, xScale = .01, yScale = .01, time = 1,onComplete = restore})
-   solute:setFillColor(.4,.4,.4,.4)
+   solute:setFillColor(.4,.4,.4,.7)
 
    local message= {
 	   "Globule is become solute.",
