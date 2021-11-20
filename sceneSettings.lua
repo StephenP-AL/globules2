@@ -111,7 +111,8 @@ function scene:show( event )
       sceneGroup:insert(musicText)
       sceneGroup:insert(slider1)
       sceneGroup:insert(onOffSwitch)
-    
+      sceneGroup:insert(musicBox1)
+      sceneGroup:insert(musicText1)
 
       
    if ( phase == "will" ) then
