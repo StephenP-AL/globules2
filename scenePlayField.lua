@@ -166,7 +166,7 @@ function scene:show( event )
 
 		bombBlastRadius = BombBlastCircle:new({xPos=xVal, yPos=yVal});
 		bombBlastRadius:spawn();
-		sceneGroup:insert(bombBlastRadius.shape);
+--		sceneGroup:insert(bombBlastRadius.shape);
 
 		local activateTxt = display.newText(bombBlastRadius.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 24);
 		sceneGroup:insert(activateTxt);
