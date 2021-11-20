@@ -199,7 +199,7 @@ function scene:show( event )
 			bomb = Bomb:new();
 			bomb:spawn();
 			print("Bomb: ",bomb)
-			sceneGroup:insert(bomb);
+			--sceneGroup:insert(bomb) --causes crash "bad argument #-2 to 'insert' (Proxy expected, got nil)"
 			bomb.shape:addEventListener("touch", bombActivate);
 
 			powerupTimer = timer.performWithDelay(5000, bombRemoveNoClick);
