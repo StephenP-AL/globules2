@@ -137,7 +137,7 @@ function scene:show( event )
 		--dd:activate();
 
 		timer.performWithDelay(2000, function () activateTxt:removeSelf() activateTxt = nil end)
-		timer.performWithDelay(5000, bombRemove);
+		timer.performWithDelay(1000, bombRemove);
 
 		return true;
 	end
