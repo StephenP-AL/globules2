@@ -34,6 +34,20 @@ function scene:show( event )
  
    if ( phase == "will" ) then
       -- Called when the scene is still off screen (but is about to come on screen).
+      	
+	--Play statistics
+	saturationLimit = 500
+	saturation = 0
+	score = 0
+	pause = true
+	hasLevelStarted = false;
+	damageOutput = 1;
+	dd = nil;
+	bomb = nil;
+	bombBlastRadius = nil;
+	powerupTimer = nil;
+
+
      	level = event.params.level
 	print("level: "..level)
       	local lvlGlob = system.pathForFile("level/"..level.."/glob.csv")
@@ -71,25 +85,6 @@ function scene:show( event )
 	speedConstant = 10 -- Bases speed for globules TODO: Adjust based upon current difficulty
 	speedScale = 16.5 --Adjusts the relative speed between globules of different sizes
 	testSize = 80 -- default size of globule TODO: find a better way to do this
-
-	--Play statistics
-	saturationLimit = 500
-	saturation = 0
-	score = 0
---<<<<<<< HEAD
-	pause = true
-	hasLevelStarted = false;
-	damageOutput = 1;
-	
-	--Powerup instances
-	dd = nil;
-	bomb = nil;
-	bombBlastRadius = nil;
-	powerupTimer = nil;
---=======
-
-	pause = true;
--->>>>>>> levels
 	--
 	-- TODO replace these text displays with widgets
 	local saturationText = display.newText("Saturation: 0",0,-25)
@@ -439,7 +434,11 @@ function scene:show( event )
 -->>>>>>> levels
 	local options = {
 		isModal = true,
-		params = {introText = introList}
+		effect = "fade",
+		time = 1800,
+		params = {
+			introText = introList
+			}
 	}
 	composer.showOverlay("sceneLevelIntro",options)
 

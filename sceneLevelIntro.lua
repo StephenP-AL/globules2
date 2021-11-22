@@ -36,10 +36,10 @@ function scene:show( event )
 
 	local function closeListener(event)
 		if (event.phase == "ended")then
-			composer.hideOverlay()
+			composer.hideOverlay("fade",400)
 		end
 	end
-	local background = display.newRoundedRect(display.contentCenterX,display.contentCenterY,display.contentWidth,display.contentHeight,4)
+	local background = display.newRoundedRect(display.contentCenterX,display.contentCenterY,display.contentWidth,display.contentHeight+100,4)
 	background:setFillColor(.2,0.2,0.5,.85)
 	sceneGroup:insert(background)
 	
