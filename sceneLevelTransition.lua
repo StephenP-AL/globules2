@@ -28,7 +28,8 @@ function scene:show( event )
    if ( phase == "will" ) then
       -- Called when the scene is still off screen (but is about to come on screen).
       	composer.removeScene("scenePlayField",false)
-	print("Transition level: "..event.params.level)
+	print("Transition score: "..event.params.score)
+
       	composer.gotoScene("scenePlayField",{params = event.params})
    elseif ( phase == "did" ) then
       -- Called when the scene is now on screen.

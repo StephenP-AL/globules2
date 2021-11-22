@@ -41,7 +41,9 @@ local function startListener(event)
 		then
 			local params = {
             			levelParTimer = 120,
-				level = 1	
+				level = 1,
+				score = 0,
+
 			}
 			composer.gotoScene("sceneLevelTransition",{params = params} )
 		end

@@ -39,7 +39,8 @@ local function ch1 (event)
 		then
 			local params = {
             			levelParTimer = 120,
-				level =1 
+				level =1, 
+				score = 0
 			}
 			composer.gotoScene("sceneLevelTransition",{params = params} )
 		end
@@ -50,7 +51,8 @@ local function ch1 (event)
 		then
 			local params = {
             			levelParTimer = 120,
-				level =4 
+				level =4 ,
+				score = 0
 			}
 			composer.gotoScene("sceneLevelTransition",{params = params} )
 		end
@@ -60,7 +62,8 @@ local function ch3 (event)
 		then
 			local params = {
             			levelParTimer = 120,
-				level =7 
+				level =7,
+				score = 0
 			}
 			composer.gotoScene("sceneLevelTransition",{params = params} )
 		end
@@ -70,7 +73,8 @@ local function ch4 (event)
 		then
 			local params = {
             			levelParTimer = 120,
-				level =10
+				level =10,
+				score = 0
 			}
 			composer.gotoScene("sceneLevelTransition",{params = params} )
 		end

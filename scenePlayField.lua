@@ -38,7 +38,7 @@ function scene:show( event )
 	--Play statistics
 	saturationLimit = 500
 	saturation = 0
-	score = 0
+	score = event.params.score
 	pause = true
 	hasLevelStarted = false;
 	damageOutput = 1;
@@ -90,7 +90,7 @@ function scene:show( event )
 	local saturationText = display.newText("Saturation: 0",0,-25)
 	saturationText.anchorX = 0
 	sceneGroup:insert(saturationText)
-	local scoreText = display.newText("Score: 0",0,-5)
+	local scoreText = display.newText("Score: "..score,0,-5)
 	scoreText.anchorX = 0
 	sceneGroup:insert(scoreText)
 	parTimer = event.params.levelParTimer;
@@ -510,11 +510,15 @@ function scene:show( event )
 				print("final: "..finalLevel)
 				if (finalLevel == "0") then
 					local nextlvl = level + 1
+					local pscore = score
 					pause = true
 					spawnIterator = 1
 					params = {
 						levelParTimer = 120,
-						level = nextlvl}
+						level = nextlvl,
+						score = pscore
+					}
+					print("play field before next level score: "..score)
 					composer.gotoScene("sceneLevelTransition",{params = params} )
 				elseif (finalLevel == "1") then
 					print(finalLevel)
