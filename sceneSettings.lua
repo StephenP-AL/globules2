@@ -38,12 +38,22 @@ function scene:show( event )
          return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
        end
       local function sliderListener( event )
-         print( "Slider Volume at " .. event.value .. "%" )
+         --print( "Slider Volume at " .. event.value .. "%" )
          local value=map(event.value,0,100,0,1)
+	 if not onOffSwitch.isOn then
+	 	audio.setVolume(value,{channel = 1})
+	end
          composer.setVariable("setVolume",value)
       end
       local function onSwitchPress( event )
-         composer.setVariable("setVolume",0)
+	      print(tostring(onOffSwitch.isOn))
+	      if onOffSwitch.isOn then
+		      audio.setVolume(composer.getVariable("setVolume"),{channel = 1})
+	      else
+	 		audio.setVolume(0,{channel = 1})
+		end
+
+ --        composer.setVariable("setVolume",0)
       end
       
      
@@ -73,11 +83,11 @@ function scene:show( event )
              x = display.contentCenterX+75,
              y = 160,
              width = 130,
-             value=0,
+             value=composer.getVariable("setVolume"),
              listener = sliderListener
           })
 
-          local onOffSwitch = widget.newSwitch(
+          onOffSwitch = widget.newSwitch(
             {
                 left = 250,
                 top = 200,

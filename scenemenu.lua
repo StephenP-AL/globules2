@@ -4,7 +4,9 @@ local widget = require("widget")
 local background = display.newImageRect("globulesBackgroundImage.jpg", display.contentWidth*2.2 , display.contentHeight*2.2 )
 local levelbuttonImage = "LevelButtonGlobulesImage_adobespark (1).png"
 local settingsCogWheelImage = "cogWheelImage2.png"
-composer.setVariable("setVolume",100)
+if (composer.getVariable("setVolume") == nil)then
+	composer.setVariable("setVolume",100)
+end
 local music= audio.loadStream("backgroundMusic.mp3",{loops = -1})
 local playMusic=audio.play(music,{chanel=1,loops=-1})
 
