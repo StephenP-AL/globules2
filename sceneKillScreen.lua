@@ -28,13 +28,14 @@ function scene:show( event )
    local message = {
 	   "Globule is much many.",
 	   "Fast not enuff.",
-	   "Plees again."
+	   "Plees again.",
+	   "Final Score: "..event.params.finalScore
    }
 
  
    if ( phase == "will" ) then
       -- Called when the scene is still off screen (but is about to come on screen).
-      	local background = display.newRoundedRect(display.contentCenterX,display.contentCenterY,display.contentWidth,display.contentHeight,4)
+      	local background = display.newRoundedRect(display.contentCenterX,display.contentCenterY,display.contentWidth,display.contentHeight+100,4)
 	sceneGroup:insert(background)
 	background:setFillColor(.4,.1,.4,.85)
 	local function closeListener(event)

@@ -164,7 +164,7 @@ function scene:show( event )
 --		sceneGroup:insert(bombBlastRadius.shape);
 
 		local activateTxt = display.newText(bombBlastRadius.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 24);
-		sceneGroup:insert(activateTxt);
+		--sceneGroup:insert(activateTxt);
 		--dd:activate();
 
 		timer.performWithDelay(2000, function () activateTxt:removeSelf() activateTxt = nil end)
@@ -183,7 +183,7 @@ function scene:show( event )
 		if (updatedParTimer == parTimer - 20) then
 			dd = DoubleDamage:new();
 			dd:spawn();
-			sceneGroup:insert(dd.shape);
+		--	sceneGroup:insert(dd.shape);
 			dd.shape:addEventListener("touch", ddActivate);
 
 			powerupTimer = timer.performWithDelay(5000, ddRemoveNoClick);
@@ -480,7 +480,12 @@ function scene:show( event )
 		saturation = sat
 		if (saturation > saturationLimit) then
 			pause = true
-			composer.showOverlay("sceneKillScreen")
+			composer.showOverlay("sceneKillScreen",{
+						effect = "fade",
+						time = 1000,
+						params = {finalScore = score}
+					}
+)
 		end
 
 		--[[ Incompatible with level changes
