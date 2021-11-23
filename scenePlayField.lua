@@ -46,7 +46,7 @@ function scene:show( event )
 	bomb = nil;
 	bombBlastRadius = nil;
 	powerupTimer = nil;
-	tempTimer = 0;
+	parTimer = nil;
 
 
      	level = event.params.level
@@ -66,7 +66,6 @@ function scene:show( event )
 	initSpawnTimer = 800
 	finalLevel = 0
 	parTime = 120;
-	parTimer = nil;
 	
 	for record in fileParams:lines()
 		do
@@ -82,6 +81,14 @@ function scene:show( event )
 		do
 			table.insert(introList,record.type)
 		end	
+
+	local lvlPowerups = system.pathForFile("level/"..level.."/powerups.csv");
+	local filePowerup = csv.open(lvlPowerups, {header=true});
+	local powerupList = {};
+	for record in filePowerup:lines() do
+		table.insert(powerupList, record.type);
+	end
+
       	local pysics = require("physics")
 	physics.start()
 	physics.setGravity(0,0)
@@ -98,10 +105,13 @@ function scene:show( event )
 	local scoreText = display.newText("Score: "..score,0,-5)
 	scoreText.anchorX = 0
 	sceneGroup:insert(scoreText)
-	updatedParTimer = parTime;
-	local parTimerText = display.newText("Time Bonus: "..updatedParTimer, display.contentWidth - 130, -25);
+	updatedParTimer = tonumber(parTime);
+	local parTimerText = display.newText("Time Bonus: "..updatedParTimer, display.contentWidth - 120, -25);
 	parTimerText.anchorX = 0;
 	sceneGroup:insert(parTimerText);
+	local levelText = display.newText("Level: "..level, display.contentWidth - 120, -5);
+	levelText.anchorX = 0;
+	sceneGroup:insert(levelText);
 
 
 	--Field boundries
@@ -166,7 +176,7 @@ function scene:show( event )
 
 		bombBlastRadius = BombBlastCircle:new({xPos=xVal, yPos=yVal});
 		bombBlastRadius:spawn();
---		sceneGroup:insert(bombBlastRadius.shape);
+		sceneGroup:insert(bombBlastRadius.shape);
 
 		local activateTxt = display.newText(bombBlastRadius.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 24);
 		--sceneGroup:insert(activateTxt);
@@ -179,36 +189,33 @@ function scene:show( event )
 	end
 
 	local function countDownTimer()
-		updatedParTimer = updatedParTimer - 1;
+		if (updatedParTimer > 0) then
+			updatedParTimer = updatedParTimer - 1;
+		end
 
 		parTimerText.text = "Time Bonus: "..updatedParTimer;
 
 
-		-- if (updatedParTimer == parTime - 20) then
-		-- 	dd = DoubleDamage:new();
-		-- 	dd:spawn();
-		-- 	sceneGroup:insert(dd.shape);
-		-- 	dd.shape:addEventListener("touch", ddActivate);
+		if (updatedParTimer == parTime - 20) then
+			dd = DoubleDamage:new();
+			dd:spawn();
+			sceneGroup:insert(dd.shape);
+			dd.shape:addEventListener("touch", ddActivate);
 
-		-- 	powerupTimer = timer.performWithDelay(5000, ddRemoveNoClick);
+			powerupTimer = timer.performWithDelay(5000, ddRemoveNoClick);
 
-		-- end
+		end
 
-		-- if (updatedParTimer == parTime - 10) then
-		-- 	bomb = Bomb:new();
-		-- 	bomb:spawn();
-		-- 	print("Bomb: ",bomb)
-		-- 	sceneGroup:insert(bomb) --causes crash "bad argument #-2 to 'insert' (Proxy expected, got nil)"
-		-- 	bomb.shape:addEventListener("touch", bombActivate);
+		if (updatedParTimer == parTime - 10) then
+			bomb = Bomb:new();
+			bomb:spawn();
+			print("Bomb: ",bomb)
+			--sceneGroup:insert(bomb.shape) --causes crash "bad argument #-2 to 'insert' (Proxy expected, got nil)"
+			bomb.shape:addEventListener("touch", bombActivate);
 
-		-- 	powerupTimer = timer.performWithDelay(5000, bombRemoveNoClick);
+			powerupTimer = timer.performWithDelay(5000, bombRemoveNoClick);
 
-		-- end
-	end
-
-	local function startParTimer()
-		parTimer = timer.performWithDelay(1000, countDownTimer, parTime);
-		print("Par Time: "..parTime);
+		end
 	end
 
 	local function globCollision(event)
@@ -234,6 +241,7 @@ function scene:show( event )
 		print(spawnCount.." resume")
 		pause = false
 		physics.start()
+
 
 	end
 	function addScore(points)
@@ -404,13 +412,12 @@ function scene:show( event )
 			glob.strokeWidth = 2
 		end
 
-		group:addEventListener("collision", globCollision);
-
-		
-		if (hasLevelStarted == false) then
-			startParTimer();
+		if(hasLevelStarted == false) then
+			parTimer = timer.performWithDelay(1000, countDownTimer, tonumber(parTime));
 			hasLevelStarted = true;
 		end
+
+		group:addEventListener("collision", globCollision);
 	end
 
 	local function spawnGlobule(type)
@@ -524,6 +531,7 @@ function scene:show( event )
 		elseif spawnIterator > spawnCount then
 			if (#globules == 0 and saturation == 0) then
 				
+				timer.cancel(parTimer);
 				score = calculateScoreBonus(score, updatedParTimer, parTime);
 				print("final: "..finalLevel)
 				if (finalLevel == "0") then
