@@ -5,8 +5,8 @@ local background = display.newImageRect("globulesBackgroundImage.jpg", display.c
 local levelbuttonImage = "LevelButtonGlobulesImage_adobespark (1).png"
 local settingsCogWheelImage = "cogWheelImage2.png"
 composer.setVariable("setVolume",100)
-local music= audio.loadStream("backgroundMusic.mp3",{loops = -1})
-local playMusic=audio.play(music,{chanel=1,loops=-1})
+-- local music= audio.loadStream("backgroundMusic.mp3",{loops = -1})
+-- local playMusic=audio.play(music,{chanel=1,loops=-1})
 
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE

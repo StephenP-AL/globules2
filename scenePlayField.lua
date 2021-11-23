@@ -46,6 +46,7 @@ function scene:show( event )
 	bomb = nil;
 	bombBlastRadius = nil;
 	powerupTimer = nil;
+	tempTimer = 0;
 
 
      	level = event.params.level
@@ -64,10 +65,14 @@ function scene:show( event )
 	local fileParams = csv.open(lvlParams,{header = true})
 	initSpawnTimer = 800
 	finalLevel = 0
+	parTime = 120;
+	parTimer = nil;
+	
 	for record in fileParams:lines()
 		do
 			initSpawnTimer = record.spawnTimer
 			finalLevel = record.final
+			parTime = record.parTime
 		end
 
       	local lvlIntro= system.pathForFile("level/"..level.."/intro.csv")
@@ -93,11 +98,11 @@ function scene:show( event )
 	local scoreText = display.newText("Score: "..score,0,-5)
 	scoreText.anchorX = 0
 	sceneGroup:insert(scoreText)
-	parTimer = event.params.levelParTimer;
-	updatedParTimer = parTimer;
-	local parTimerText = display.newText("Time Bonus: "..parTimer, display.contentWidth - 130, -25);
+	updatedParTimer = parTime;
+	local parTimerText = display.newText("Time Bonus: "..updatedParTimer, display.contentWidth - 130, -25);
 	parTimerText.anchorX = 0;
 	sceneGroup:insert(parTimerText);
+
 
 	--Field boundries
 	local boundTop = display.newRect(0,0,display.contentWidth,0)
@@ -174,32 +179,36 @@ function scene:show( event )
 	end
 
 	local function countDownTimer()
-		if hasLevelStarted == false then
-			return
-		end
 		updatedParTimer = updatedParTimer - 1;
+
 		parTimerText.text = "Time Bonus: "..updatedParTimer;
 
-		if (updatedParTimer == parTimer - 20) then
-			dd = DoubleDamage:new();
-			dd:spawn();
-		--	sceneGroup:insert(dd.shape);
-			dd.shape:addEventListener("touch", ddActivate);
 
-			powerupTimer = timer.performWithDelay(5000, ddRemoveNoClick);
+		-- if (updatedParTimer == parTime - 20) then
+		-- 	dd = DoubleDamage:new();
+		-- 	dd:spawn();
+		-- 	sceneGroup:insert(dd.shape);
+		-- 	dd.shape:addEventListener("touch", ddActivate);
 
-		end
+		-- 	powerupTimer = timer.performWithDelay(5000, ddRemoveNoClick);
 
-		if (updatedParTimer == parTimer - 10) then
-			bomb = Bomb:new();
-			bomb:spawn();
-			print("Bomb: ",bomb)
-			--sceneGroup:insert(bomb) --causes crash "bad argument #-2 to 'insert' (Proxy expected, got nil)"
-			bomb.shape:addEventListener("touch", bombActivate);
+		-- end
 
-			powerupTimer = timer.performWithDelay(5000, bombRemoveNoClick);
+		-- if (updatedParTimer == parTime - 10) then
+		-- 	bomb = Bomb:new();
+		-- 	bomb:spawn();
+		-- 	print("Bomb: ",bomb)
+		-- 	sceneGroup:insert(bomb) --causes crash "bad argument #-2 to 'insert' (Proxy expected, got nil)"
+		-- 	bomb.shape:addEventListener("touch", bombActivate);
 
-		end
+		-- 	powerupTimer = timer.performWithDelay(5000, bombRemoveNoClick);
+
+		-- end
+	end
+
+	local function startParTimer()
+		parTimer = timer.performWithDelay(1000, countDownTimer, parTime);
+		print("Par Time: "..parTime);
 	end
 
 	local function globCollision(event)
@@ -225,7 +234,6 @@ function scene:show( event )
 		print(spawnCount.." resume")
 		pause = false
 		physics.start()
-		timer.performWithDelay(1000, countDownTimer, parTimer + 1);
 
 	end
 	function addScore(points)
@@ -397,6 +405,12 @@ function scene:show( event )
 		end
 
 		group:addEventListener("collision", globCollision);
+
+		
+		if (hasLevelStarted == false) then
+			startParTimer();
+			hasLevelStarted = true;
+		end
 	end
 
 	local function spawnGlobule(type)
@@ -475,7 +489,6 @@ function scene:show( event )
 					globule.jump = math.random() * 200
 				end
 			end
-			hasLevelStarted = true;
 		end
 		saturation = sat
 		if (saturation > saturationLimit) then
@@ -491,7 +504,7 @@ function scene:show( event )
 		--[[ Incompatible with level changes
 		if (saturation == 0 and hasLevelStarted == true) then
 			pause = true;
-			score = calculateScoreBonus(score, updatedParTimer, parTimer);
+			score = calculateScoreBonus(score, updatedParTimer, parTime);
 			composer.gotoScene("sceneWinScreen");
 		end
 		]]
@@ -511,7 +524,7 @@ function scene:show( event )
 		elseif spawnIterator > spawnCount then
 			if (#globules == 0 and saturation == 0) then
 				
-				score = calculateScoreBonus(score, updatedParTimer, parTimer);
+				score = calculateScoreBonus(score, updatedParTimer, parTime);
 				print("final: "..finalLevel)
 				if (finalLevel == "0") then
 					local nextlvl = level + 1
@@ -519,7 +532,6 @@ function scene:show( event )
 					pause = true
 					spawnIterator = 1
 					params = {
-						levelParTimer = 120,
 						level = nextlvl,
 						score = pscore
 					}

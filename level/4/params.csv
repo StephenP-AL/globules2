@@ -1,2 +1,2 @@
-spawnTimer,final
-600,0
+spawnTimer,final,parTime
+600,0,20
