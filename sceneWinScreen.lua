@@ -99,7 +99,8 @@ function scene:create( event )
 	   "Globule is become solute.",
 	   "Solute is much big.",
 	   "Solute is become all.",
-	   "You is helper; you is solute"
+	   "You is helper; you is solute!",
+	   "Final score: "..event.params.finalScore
    }
 	for index, line in pairs(message) do
 		text = display.newText(line,display.contentCenterX,display.contentHeight + index * 100,native.systemFont, 25)

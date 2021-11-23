@@ -522,7 +522,12 @@ function scene:show( event )
 					composer.gotoScene("sceneLevelTransition",{params = params} )
 				elseif (finalLevel == "1") then
 					print(finalLevel)
-					composer.gotoScene("sceneWinScreen")
+					composer.gotoScene("sceneWinScreen",{
+						effect = "fade",
+						time = 1000,
+						params = {finalScore = score}
+					}
+					)
 				end
 			end
 		end
