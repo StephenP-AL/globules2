@@ -292,6 +292,26 @@ function scene:show( event )
 		end
 	end
 
+	local function removeAllPowerupsFromDisplay()
+		if (bomb ~= nil) then
+			bomb.shape:removeSelf();
+		end
+		if (dd ~= nil) then
+			dd.shape:removeSelf();
+		end
+		if (bigBomb ~= nil) then
+			bigBomb.shape:removeSelf();
+		end
+		if (bombBlastRadius ~= nil) then
+			bombBlastRadius.shape:removeSelf();
+			bombBlastRadius.blast:removeSelf();
+		end
+		if (bigBombBlast ~= nil) then
+			bigBombBlast.shape:removeSelf();
+			bigBombBlast.blast:removeSelf();
+		end
+	end
+
 	local function countDownTimer()
 		if (updatedParTimer > 0) then
 			updatedParTimer = updatedParTimer - 1;
@@ -600,6 +620,7 @@ function scene:show( event )
 		if (saturation > saturationLimit) then
 			pause = true
 			timer.cancel(parTimer);
+			removeAllPowerupsFromDisplay();
 
 			composer.showOverlay("sceneKillScreen",{
 						effect = "fade",
@@ -633,6 +654,8 @@ function scene:show( event )
 			if (#globules == 0 and saturation == 0) then
 				
 				timer.cancel(parTimer);
+				removeAllPowerupsFromDisplay();
+
 				local bonusMultiplier = calculateScoreBonus(updatedParTimer, parTime);
 				score = score - levelScore;
 				levelScore = levelScore * bonusMultiplier;
