@@ -66,7 +66,7 @@ function scene:show( event )
 			table.insert(spawnList,record.type)
 			spawnCount = spawnCount + 1
 		end
-		print(spawnCount,spawnCount)
+		print("Spawn Count:",spawnCount)
 	local lvlParams = system.pathForFile("level/"..level.."/params.csv")
 	local fileParams = csv.open(lvlParams,{header = true})
 	initSpawnTimer = 800
@@ -354,7 +354,7 @@ function scene:show( event )
 	end
 
 	function scene:resumeGame()
-		print(spawnCount.." resume")
+		--print(spawnCount.." resume")
 		pause = false
 		physics.start()
 
@@ -585,7 +585,7 @@ function scene:show( event )
 
 	spawnIterator = 1
 	spawnTimer = initSpawnTimer
-	print("level spawn timer: "..initSpawnTimer)
+	--print("level spawn timer: "..initSpawnTimer)
 	local function update()
 
 		if (pause == true)then
@@ -644,9 +644,9 @@ function scene:show( event )
 
 			if (spawnTimer == 0) then
 --				print("1.1. Iterator "..spawnIterator.." Count "..spawnCount)
-				print("Spawning. Level timer: "..initSpawnTimer.." current timer "..spawnTimer)
+				--print("Spawning. Level timer: "..initSpawnTimer.." current timer "..spawnTimer)
 				spawnGlobule(spawnList[spawnIterator]) 
-				print("Spawn "..spawnIterator)
+				--print("Spawn "..spawnIterator)
 				spawnIterator = spawnIterator + 1
 				spawnTimer = initSpawnTimer
 			end
@@ -671,10 +671,10 @@ function scene:show( event )
 						level = nextlvl,
 						score = pscore
 					}
-					print("play field before next level score: "..score)
+					--print("play field before next level score: "..score)
 					composer.gotoScene("sceneLevelTransition",{params = params} )
 				elseif (finalLevel == "1") then
-					print(finalLevel)
+					--print(finalLevel)
 					composer.gotoScene("sceneWinScreen",{
 						effect = "fade",
 						time = 1000,

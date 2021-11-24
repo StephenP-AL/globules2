@@ -48,9 +48,11 @@ function scene:show( event )
       local function onSwitchPress( event )
 	      print(tostring(onOffSwitch.isOn))
 	      if onOffSwitch.isOn then
+		      composer.setVariable("mute",false)
 		      audio.setVolume(composer.getVariable("setVolume"),{channel = 1})
 	      else
 	 		audio.setVolume(0,{channel = 1})
+		      composer.setVariable("mute",true)
 		end
 
  --        composer.setVariable("setVolume",0)
@@ -93,7 +95,8 @@ function scene:show( event )
                 top = 200,
                 style = "onOff",
                 id = "onOffSwitch",
-                onPress = onSwitchPress
+                onPress = onSwitchPress,
+		initialSwitchState = composer.getVariable("mute")
             }
         )
          

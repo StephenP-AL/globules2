@@ -7,6 +7,9 @@ local settingsCogWheelImage = "cogWheelImage2.png"
 if (composer.getVariable("setVolume") == nil)then
 	composer.setVariable("setVolume",100)
 end
+if (composer.getVariable("mute") == nil) then
+	composer.setVariable("mute", false)
+end
 local music= audio.loadStream("backgroundMusic.mp3",{loops = -1})
 local playMusic=audio.play(music,{chanel=1,loops=-1})
 
@@ -152,7 +155,9 @@ local testWinScreen = widget.newButton(
    }
 );
 
-audio.setVolume(composer.getVariable("setVolume"),{channel=1})
+if (composer.getVariable("mute") == false) then
+	audio.setVolume(composer.getVariable("setVolume"),{channel=1})
+end
 
 -- sceneGroup:insert(playMusic);
 sceneGroup:insert(background);
