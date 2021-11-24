@@ -316,7 +316,7 @@ function scene:show( event )
 					event.target.delete = true
 						event.target:removeSelf()
 					levelScore = levelScore + 4
-					score = score + levelScore;
+					score = score + 4;
 					scoreText.text = "Score: "..score
 				end
 			end
@@ -325,7 +325,7 @@ function scene:show( event )
 					event.target.delete = true
 					event.target:removeSelf();
 					levelScore = levelScore + 4
-					score = score + levelScore;
+					score = score + 4;
 				scoreText.text = "Score: "..score
 				end
 			end
@@ -342,7 +342,7 @@ function scene:show( event )
 	end
 	function addScore(points)
 		levelScore = levelScore + points;
-		score = score + levelScore;
+		score = score + points;
 		scoreText.text = "Score: "..score
 	end
 	function tapGlobule(event)
@@ -354,7 +354,7 @@ function scene:show( event )
 			event.target.delete = true
 		        event.target:removeSelf()
 				levelScore = levelScore + 4
-				score = score + levelScore;
+				score = score + 4;
 			scoreText.text = "Score: "..score
 		else
 			if (event.target.type == "multi") then
@@ -403,7 +403,7 @@ function scene:show( event )
 			event.target.delete = true
 			event.target:removeSelf()
 			levelScore = levelScore + 1
-			score = score + levelScore;
+			score = score + 1;
 			scoreText.text = "Score: "..score
 
 		end
