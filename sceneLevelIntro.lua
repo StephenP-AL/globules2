@@ -53,7 +53,8 @@ function scene:show( event )
 	local closeButton= widget.newButton(
    	{
       		x = display.contentCenterX,
-		y = display.contentHeight + #event.params.introText * 110,
+		y = (#event.params.introText + 1) * 45,
+--		y = display.contentHeight + #event.params.introText * 110,
       		id = "closeButton",
       		label = "Close",
       		labelColor = { default={ 1, 0.8, 0 }, over={ 0.2, 1, 1} },
@@ -64,7 +65,7 @@ function scene:show( event )
       		defaultFile= "LevelButtonGlobulesImage_adobespark (1).png"
    	}
 	)
-	transition.to(closeButton,{y = (#event.params.introText + 1) * 45, time = 13000 + (#event.params.introText + 2) * 500})
+--	transition.to(closeButton,{y = (#event.params.introText + 1) * 45, time = 13000 + (#event.params.introText + 2) * 500})
 	sceneGroup:insert(closeButton)
 
 
