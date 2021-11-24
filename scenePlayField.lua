@@ -9,6 +9,7 @@ local BigBombBlast = require("BigBombBlast");
 local csv = require("csv")
 
 local popSound = audio.loadSound("bubblePop.wav")
+local hitSound = audio.loadSound("hit_m12.wav")
 
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
@@ -372,6 +373,7 @@ function scene:show( event )
         	if (event.target.hp > 0) then
 		        event.target.hp = event.target.hp - damageOutput;
 			--TODO: need a visual and audio indicator of hit
+			audio.play(hitSound)
 			addScore(1)
 			event.target.glob.strokeWidth = event.target.hp * 5 + 2
 
