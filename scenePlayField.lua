@@ -1,15 +1,14 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
---<<<<<<< HEAD
 local DoubleDamage = require("DoubleDamage");
 local Slasher = require("Slasher");
 local Bomb = require("Bomb");
 local BombBlastCircle = require("BombBlastCircle");
 local BigBomb = require("BigBomb");
 local BigBombBlast = require("BigBombBlast");
---=======
 local csv = require("csv")
--->>>>>>> levels
+
+local popSound = audio.loadSound("bubblePop.wav")
 
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
@@ -373,10 +372,13 @@ function scene:show( event )
 		elseif (event.target.size < 21) then
 			event.target.delete = true
 		        event.target:removeSelf()
-				levelScore = levelScore + 4
-				score = score + 4;
+			audio.play(popSound)
+			levelScore = levelScore + 4
+			score = score + 4;
 			scoreText.text = "Score: "..score
 		else
+
+			audio.play(popSound)
 			if (event.target.type == "multi") then
 				local angle = math.random() * 2 * math.pi
 				for i = 0,2,1 do
