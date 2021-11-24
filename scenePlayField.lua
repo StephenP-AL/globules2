@@ -587,7 +587,8 @@ function scene:show( event )
 	composer.showOverlay("sceneLevelIntro",options)
 
 
-	spawnIterator = 1
+	spawnGlobule(spawnList[1]) 
+	spawnIterator = 2
 	spawnTimer = initSpawnTimer
 	--print("level spawn timer: "..initSpawnTimer)
 	local function update()
