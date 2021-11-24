@@ -144,8 +144,10 @@ function scene:show( event )
 	end
 	
 	local function bombRemoveNoClick(event)
-		bomb.shape:removeSelf();
-		bomb = nil;
+		if (bomb ~= nil and bomb.shape ~= nil) then
+			bomb.shape:removeSelf();
+			bomb = nil;
+		end
 	end
 
 	local function bigBombRemoveNoClick(event)
@@ -292,7 +294,7 @@ function scene:show( event )
 	end
 
 	local function removeAllPowerupsFromDisplay()
-		if (bomb ~= nil) then
+		if (bomb ~= nil and bomb.shape ~= nil) then
 			bomb.shape:removeSelf();
 		end
 		if (dd ~= nil) then
