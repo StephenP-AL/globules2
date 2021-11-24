@@ -599,6 +599,8 @@ function scene:show( event )
 		saturation = sat
 		if (saturation > saturationLimit) then
 			pause = true
+			timer.cancel(parTimer);
+
 			composer.showOverlay("sceneKillScreen",{
 						effect = "fade",
 						time = 1000,
