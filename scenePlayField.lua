@@ -294,7 +294,9 @@ function scene:show( event )
 	end
 
 	local function removeAllPowerupsFromDisplay()
-		if (bomb ~= nil and bomb.shape ~= nil) then
+		if (bomb == nil or bomb.shape == nil) then
+			print("No bombs")
+		else
 			bomb.shape:removeSelf();
 		end
 		if (dd ~= nil) then
@@ -371,6 +373,8 @@ function scene:show( event )
 		        event.target.hp = event.target.hp - damageOutput;
 			--TODO: need a visual and audio indicator of hit
 			addScore(1)
+			event.target.glob.strokeWidth = event.target.hp * 5 + 2
+
 		elseif (event.target.size < 21) then
 			event.target.delete = true
 		        event.target:removeSelf()
@@ -463,6 +467,7 @@ function scene:show( event )
 		local glob = display.newCircle(0,0,group.size)
 		group:addEventListener("tap",tapGlobule)
 		group:insert(glob)
+		group.glob = glob
 		sceneGroup:insert(group)
 		if (type == "paramecium") then
 			physics.addBody(group, 'dynamic', {bounce=1,radius=group.size,density=.1})
