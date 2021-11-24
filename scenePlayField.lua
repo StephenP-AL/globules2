@@ -5,6 +5,8 @@ local DoubleDamage = require("DoubleDamage");
 local Slasher = require("Slasher");
 local Bomb = require("Bomb");
 local BombBlastCircle = require("BombBlastCircle");
+local BigBomb = require("BigBomb");
+local BigBombBlast = require("BigBombBlast");
 --=======
 local csv = require("csv")
 -->>>>>>> levels
@@ -22,6 +24,7 @@ local csv = require("csv")
 function scene:create( event )
  
    local sceneGroup = self.view
+
    -- Initialize the scene here.
    -- Example: add display objects to "sceneGroup", add touch listeners, etc.
 end
@@ -39,12 +42,15 @@ function scene:show( event )
 	saturationLimit = 500
 	saturation = 0
 	score = event.params.score
+	levelScore = 0;
 	pause = true
 	hasLevelStarted = false;
 	damageOutput = 1;
 	dd = nil;
 	bomb = nil;
 	bombBlastRadius = nil;
+	bigBomb = nil;
+	bigBombBlast = nil;
 	powerupTimer = nil;
 	parTimer = nil;
 
@@ -143,14 +149,26 @@ function scene:show( event )
 		bomb = nil;
 	end
 
+	local function bigBombRemoveNoClick(event)
+		bigBomb.shape:removeSelf();
+		bigBomb = nil;
+	end
+
 	local function ddRemove(event)
 		damageOutput = 1;
 		dd = nil;
 	end
 
 	local function bombRemove(event)
+		bombBlastRadius.blast:removeSelf();
 		bombBlastRadius.shape:removeSelf();
 		bombBlastRadius = nil;
+	end
+
+	local function bigBombRemove(event)
+		bigBombBlast.blast:removeSelf();
+		bigBombBlast.shape:removeSelf();
+		bigBombBlast = nil;
 	end
 
 	local function ddActivate(event)
@@ -176,6 +194,7 @@ function scene:show( event )
 
 		bombBlastRadius = BombBlastCircle:new({xPos=xVal, yPos=yVal});
 		bombBlastRadius:spawn();
+		sceneGroup:insert(bombBlastRadius.blast);
 		sceneGroup:insert(bombBlastRadius.shape);
 
 		local activateTxt = display.newText(bombBlastRadius.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 24);
@@ -183,9 +202,94 @@ function scene:show( event )
 		--dd:activate();
 
 		timer.performWithDelay(2000, function () activateTxt:removeSelf() activateTxt = nil end)
-		timer.performWithDelay(1000, bombRemove);
+		timer.performWithDelay(750, bombRemove);
 
 		return true;
+	end
+
+	local function bigBombActivate(event)
+		timer.cancel(powerupTimer);
+
+		local xVal = bigBomb.shape.xPos;
+		local yVal = bigBomb.shape.yPos;
+
+		bigBomb.shape:removeSelf();
+
+		bigBombBlast = BigBombBlast:new({xPos=xVal, yPos=yVal});
+		bigBombBlast:spawn();
+		sceneGroup:insert(bigBombBlast.blast);
+		sceneGroup:insert(bigBombBlast.shape);
+
+		local activateTxt = display.newText(bigBombBlast.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 24);
+		--sceneGroup:insert(activateTxt);
+		--dd:activate();
+
+		timer.performWithDelay(2000, function () activateTxt:removeSelf() activateTxt = nil end)
+		timer.performWithDelay(750, bigBombRemove);
+
+		return true;
+	end
+
+	local function spawnDoubleDamage()
+		dd = DoubleDamage:new();
+		dd:spawn();
+		sceneGroup:insert(dd.shape);
+		dd.shape:addEventListener("touch", ddActivate);
+
+		powerupTimer = timer.performWithDelay(5000, ddRemoveNoClick);
+	end
+
+	local function spawnBomb()
+		bomb = Bomb:new();
+		bomb:spawn();
+		print("Bomb: ",bomb)
+		--sceneGroup:insert(bomb.shape) --causes crash "bad argument #-2 to 'insert' (Proxy expected, got nil)"
+		bomb.shape:addEventListener("touch", bombActivate);
+
+		powerupTimer = timer.performWithDelay(5000, bombRemoveNoClick);
+	end
+
+	local function spawnBigBomb()
+		bigBomb = BigBomb:new();
+		bigBomb:spawn();
+		bigBomb.shape:addEventListener("touch", bigBombActivate);
+		sceneGroup:insert(bigBomb.shape);
+
+		powerupTimer = timer.performWithDelay(3000, bigBombRemoveNoClick);
+	end
+
+	local function determinePowerupSpawn()
+		if (powerupList[1] == "bomb") then
+			spawnBomb();
+		else
+			spawnDoubleDamage();
+		end
+		table.remove(powerupList, 1);
+	end
+
+	local function activatePowerups()
+
+		if (updatedParTimer == math.floor(parTime / 2)) then
+			determinePowerupSpawn();
+			return;
+		end
+
+		if (updatedParTimer == 10) then
+			determinePowerupSpawn();
+			return;
+		end
+
+		if (saturation >= saturationLimit - 50) then
+			--determinePowerupSpawn();
+			for i,powerup in pairs(powerupList) do
+				if (powerup == "bigBomb") then
+					spawnBigBomb();
+					table.remove(powerupList, i);
+				end
+			end
+
+			return;
+		end
 	end
 
 	local function countDownTimer()
@@ -195,26 +299,8 @@ function scene:show( event )
 
 		parTimerText.text = "Time Bonus: "..updatedParTimer;
 
-
-		if (updatedParTimer == parTime - 20) then
-			dd = DoubleDamage:new();
-			dd:spawn();
-			sceneGroup:insert(dd.shape);
-			dd.shape:addEventListener("touch", ddActivate);
-
-			powerupTimer = timer.performWithDelay(5000, ddRemoveNoClick);
-
-		end
-
-		if (updatedParTimer == parTime - 10) then
-			bomb = Bomb:new();
-			bomb:spawn();
-			print("Bomb: ",bomb)
-			--sceneGroup:insert(bomb.shape) --causes crash "bad argument #-2 to 'insert' (Proxy expected, got nil)"
-			bomb.shape:addEventListener("touch", bombActivate);
-
-			powerupTimer = timer.performWithDelay(5000, bombRemoveNoClick);
-
+		if (#powerupList > 0) then
+			activatePowerups();
 		end
 	end
 
@@ -229,8 +315,18 @@ function scene:show( event )
 					elseif (event.target.size < 21) then
 					event.target.delete = true
 						event.target:removeSelf()
-					score = score + 4
+					levelScore = levelScore + 4
+					score = score + levelScore;
 					scoreText.text = "Score: "..score
+				end
+			end
+			if (bigBombBlast ~= nil) then
+				if (event.other == bigBombBlast.shape) then
+					event.target.delete = true
+					event.target:removeSelf();
+					levelScore = levelScore + 4
+					score = score + levelScore;
+				scoreText.text = "Score: "..score
 				end
 			end
 		end
@@ -245,7 +341,8 @@ function scene:show( event )
 
 	end
 	function addScore(points)
-		score = score + points
+		levelScore = levelScore + points;
+		score = score + levelScore;
 		scoreText.text = "Score: "..score
 	end
 	function tapGlobule(event)
@@ -256,7 +353,8 @@ function scene:show( event )
 		elseif (event.target.size < 21) then
 			event.target.delete = true
 		        event.target:removeSelf()
-			score = score + 4
+				levelScore = levelScore + 4
+				score = score + levelScore;
 			scoreText.text = "Score: "..score
 		else
 			if (event.target.type == "multi") then
@@ -304,7 +402,8 @@ function scene:show( event )
 				end
 			event.target.delete = true
 			event.target:removeSelf()
-			score = score + 1
+			levelScore = levelScore + 1
+			score = score + levelScore;
 			scoreText.text = "Score: "..score
 
 		end
@@ -433,18 +532,18 @@ function scene:show( event )
    	end
 --<<<<<<< HEAD
 
-	local function calculateScoreBonus(finalScore, currentTimeBonus, totalParTime)
+	local function calculateScoreBonus(currentTimeBonus, totalParTime)
 
 		if (currentTimeBonus >= (totalParTime / 1.5)) then
-			return finalScore * 10;
+			return 10;
 		else if (currentTimeBonus >= (totalParTime / 2)) then
-			return finalScore * 5;
+			return 5;
 		else if (currentTimeBonus >= (totalParTime / 4)) then
-			return finalScore * 3;
+			return 3;
 		else if (currentTimeBonus > 0) then
-			return finalScore * 2;
+			return 2;
 		else
-			return finalScore;
+			return 1;
 		end
 		end
 		end
@@ -532,7 +631,11 @@ function scene:show( event )
 			if (#globules == 0 and saturation == 0) then
 				
 				timer.cancel(parTimer);
-				score = calculateScoreBonus(score, updatedParTimer, parTime);
+				local bonusMultiplier = calculateScoreBonus(updatedParTimer, parTime);
+				score = score - levelScore;
+				levelScore = levelScore * bonusMultiplier;
+				score = score + levelScore;
+
 				print("final: "..finalLevel)
 				if (finalLevel == "0") then
 					local nextlvl = level + 1

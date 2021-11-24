@@ -1,8 +1,8 @@
-local Bomb = require("Bomb");
+local BigBomb = require("BigBomb");
 
-local BombBlastCircle = Bomb:new(
+local BigBombBlastCircle = BigBomb:new(
     {
-        tag = "bombBlastCircle",
+        tag = "bigBombBlastCircle",
         activationMsg = "Kaboom!",
         visibilityDuration = 5
     }
@@ -10,14 +10,14 @@ local BombBlastCircle = Bomb:new(
 
 local filePath = "bomb-explosion.png";
 
-function BombBlastCircle:spawn()
+function BigBombBlastCircle:spawn()
     self.blastGroup = display.newGroup();
     self.shape = display.newCircle(self.xPos, self.yPos, display.contentWidth / 3);
     self.shape.alpha = 0;
     
     self.blast = display.newImage(filePath);
-    self.blast.xScale = 0.05;
-    self.blast.yScale = 0.05;
+    self.blast.xScale = 0.1;
+    self.blast.yScale = 0.1;
     self.blast.x = self.xPos;
     self.blast.y = self.yPos;
     self.blastGroup:insert(self.shape);
@@ -32,8 +32,8 @@ function BombBlastCircle:spawn()
     physics.addBody(self.shape, "dynamic");
 end
 
-function BombBlastCircle:activate()
+function BigBombBlastCircle:activate()
     
 end
 
-return BombBlastCircle;
+return BigBombBlastCircle;

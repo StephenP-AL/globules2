@@ -8,6 +8,9 @@ composer.setVariable("setVolume",100)
 -- local music= audio.loadStream("backgroundMusic.mp3",{loops = -1})
 -- local playMusic=audio.play(music,{chanel=1,loops=-1})
 
+math.randomseed(os.time());
+
+
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
 -- unless "composer.removeScene()" is called.
