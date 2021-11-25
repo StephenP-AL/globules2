@@ -109,7 +109,7 @@ function scene:show( event )
 	local scoreImage = "scoreImage-removebg-preview.png"
 	--saturationText.anchorX = 0
 	--sceneGroup:insert(saturationText)
-	local scoreText = display.newText("0",5,-20, native.systemFont, 20)
+	local scoreText = display.newText(score,5,-20, native.systemFont, 20)
 	scoreText.anchorX = 0
 	sceneGroup:insert(scoreText)
 	scoreImageRect = display.newImageRect(scoreImage, 50, 50 )
