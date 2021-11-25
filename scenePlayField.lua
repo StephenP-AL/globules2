@@ -622,7 +622,7 @@ function scene:show( event )
 			-- Random movement of paramecium
 			if (globule.type == "paramecium") then
 				globule.jump = globule.jump - 1
-				if (globule.jump <= 0) then
+				if (globule.jump <= 0 and globule ~= nil) then
 					globule:applyForce((0.5 - math.random()) * globule.size , (.5 - math.random()) * globule.size   ) 
 					globule.jump = math.random() * 200
 				end
@@ -686,7 +686,8 @@ function scene:show( event )
 					--print("play field before next level score: "..score)
 					composer.gotoScene("sceneLevelTransition",{params = params} )
 				elseif (finalLevel == "1") then
-					--print(finalLevel)
+					pause = true;
+					print("final level marker",finalLevel)
 					composer.gotoScene("sceneWinScreen",{
 						effect = "fade",
 						time = 1000,

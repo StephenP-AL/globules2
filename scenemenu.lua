@@ -13,6 +13,7 @@ end
 local music= audio.loadStream("backgroundMusic.mp3",{loops = -1})
 local playMusic=audio.play(music,{chanel=1,loops=-1})
 
+composer.removeScene("sceneWinScreen")
 math.randomseed(os.time());
 
 

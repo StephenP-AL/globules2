@@ -82,13 +82,20 @@ local function ch4 (event)
 local function win(event)
 	if (event.phase == "ended")
 		then
---			composer.gotoScene("sceneWinScreen")
+--[[
 			composer.gotoScene("sceneWinScreen",{
 						effect = "fade",
 						time = 1000,
 						params = {finalScore = 1000000}
 					}
 					)
+					]]
+			local params = {
+            			levelParTimer = 120,
+				level =0,
+				score = 0
+			}
+			composer.gotoScene("sceneLevelTransition",{params = params} )
 
 		end
 	end

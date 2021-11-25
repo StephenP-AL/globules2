@@ -86,6 +86,7 @@ function scene:create( event )
 	end
 	function closeListener(event)
 		if (event.phase == "ended")then
+			composer.removeScene("sceneWinScreen")
 			composer.gotoScene("scenemenu")
 		end
 	end
