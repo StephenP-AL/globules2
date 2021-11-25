@@ -105,12 +105,17 @@ function scene:show( event )
 	testSize = 80 -- default size of globule TODO: find a better way to do this
 	--
 	-- TODO replace these text displays with widgets
-	local saturationText = display.newText("Saturation: 0",0,-25)
-	saturationText.anchorX = 0
-	sceneGroup:insert(saturationText)
-	local scoreText = display.newText("Score: "..score,0,-5)
+	--local saturationText = display.newText("Saturation: 0",0,-25)
+	local scoreImage = "scoreImage-removebg-preview.png"
+	--saturationText.anchorX = 0
+	--sceneGroup:insert(saturationText)
+	local scoreText = display.newText("0",5,-20, native.systemFont, 20)
 	scoreText.anchorX = 0
 	sceneGroup:insert(scoreText)
+	scoreImageRect = display.newImageRect(scoreImage, 50, 50 )
+	scoreImageRect.x = 50
+	scoreImageRect.y = -20
+	sceneGroup:insert(scoreImageRect)
 	updatedParTimer = tonumber(parTime);
 	local parTimerText = display.newText("Time Bonus: "..updatedParTimer, display.contentWidth - 120, -25);
 	parTimerText.anchorX = 0;
@@ -134,7 +139,33 @@ function scene:show( event )
 	pysics.addBody(boundLeft, 'static')
 	pysics.addBody(boundRight, 'static')
 
+	local widget = require( "widget" )
+	local optionsProg = {
+		width = 64,
+		height = 64,
+		numFrames = 6,
+		sheetContentWidth = 384,
+		sheetContentHeight = 64
+	}
 
+	local progressSheet = graphics.newImageSheet( "widget-progress-view.png", optionsProg )
+	 
+	-- Create the widget
+	local progressView = widget.newProgressView(
+		{
+			sheet = progressSheet,
+			fillOuterMiddleFrame = 4,
+			fillInnerLeftFrame = 4,
+			fillInnerMiddleFrame = 4,
+			fillWidth = 0,
+			fillHeight = 32,
+			left = 100,
+			top = -40,
+			width = 220,
+			height = 100,
+			isAnimated = true
+		}
+	)
 	--Globules
 	globules = {} --table to reference all globules
 
@@ -341,7 +372,7 @@ function scene:show( event )
 						event.target:removeSelf()
 					levelScore = levelScore + 4
 					score = score + 4;
-					scoreText.text = "Score: "..score
+					scoreText.text = score
 				end
 			end
 			if (bigBombBlast ~= nil) then
@@ -350,7 +381,7 @@ function scene:show( event )
 					event.target:removeSelf();
 					levelScore = levelScore + 4
 					score = score + 4;
-				scoreText.text = "Score: "..score
+				scoreText.text = score
 				end
 			end
 		end
@@ -367,7 +398,7 @@ function scene:show( event )
 	function addScore(points)
 		levelScore = levelScore + points;
 		score = score + points;
-		scoreText.text = "Score: "..score
+		scoreText.text = score
 	end
 	function tapGlobule(event)
         	if (event.target.hp > 0) then
@@ -383,7 +414,7 @@ function scene:show( event )
 			audio.play(popSound)
 			levelScore = levelScore + 4
 			score = score + 4;
-			scoreText.text = "Score: "..score
+			scoreText.text = score
 		else
 
 			audio.play(popSound)
@@ -434,7 +465,7 @@ function scene:show( event )
 			event.target:removeSelf()
 			levelScore = levelScore + 1
 			score = score + 1;
-			scoreText.text = "Score: "..score
+			scoreText.text = score
 
 		end
 
@@ -649,7 +680,12 @@ function scene:show( event )
 			composer.gotoScene("sceneWinScreen");
 		end
 		]]
-		saturationText.text = "Saturation: "..saturation
+		
+		--saturationText.text = "Saturation: "..saturation
+		
+		local progressSaturation = saturation/500
+		progressView:setProgress(progressSaturation)
+		print(progressSaturation)
 		if (spawnIterator <= spawnCount)then
 			spawnTimer = spawnTimer - 1
 --			print("1. Iterator "..spawnIterator.." Count "..spawnCount)
