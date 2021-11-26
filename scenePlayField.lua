@@ -331,7 +331,9 @@ function scene:show( event )
 		if (bomb == nil or bomb.shape == nil) then
 			print("No bombs")
 		else
-			bomb.shape:removeSelf();
+			print(bomb,bomb.shape)
+--			bomb.shape:removeSelf();
+			bomb.shape = nil
 		end
 		if (dd ~= nil) then
 			dd.shape:removeSelf();
@@ -687,7 +689,7 @@ function scene:show( event )
 		
 		local progressSaturation = saturation/500
 		progressView:setProgress(progressSaturation)
-		print(progressSaturation)
+		--print(progressSaturation)
 		if (spawnIterator <= spawnCount)then
 			spawnTimer = spawnTimer - 1
 --			print("1. Iterator "..spawnIterator.." Count "..spawnCount)
