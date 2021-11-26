@@ -218,7 +218,9 @@ function scene:show( event )
 	end
 
 	local function bombActivate(event)
-		timer.cancel(powerupTimer);
+		if (powerupTimer ~= nil)then
+			timer.cancel(powerupTimer);
+		end
 
 		local xVal = bomb.shape.xPos;
 		local yVal = bomb.shape.yPos;
