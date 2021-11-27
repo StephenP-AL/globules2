@@ -463,17 +463,7 @@ function scene:show( event )
 					event.target.red, 
 					event.target.green, 
 					event.target.blue)
-					
-				end
-			event.target.delete = true
-			event.target:removeSelf()
-			levelScore = levelScore + 1
-			score = score + 1;
-			scoreText.text = score
-
-		end
-
-	end
+					end event.target.delete = true event.target:removeSelf() levelScore = levelScore + 1 score = score + 1; scoreText.text = score end end
 
 	-- Globule animation
 	function squishX(obj)
@@ -484,6 +474,23 @@ function scene:show( event )
 		transition.to(obj,{transition = easing.inOutSine, yScale = .9, xScale = 1.1, time = 3500, onComplete = squishX})
 	end
 	
+	-- background 
+	local bgRect = display.newRect(display.contentCenterX,display.contentCenterY,display.contentWidth,display.contentHeight + 90)
+	bgRect:setFillColor(.5,.5,.6,.8)
+	sceneGroup:insert(bgRect)
+	bgRect:toBack()
+
+	local bgItt = math.random(3) + 2
+	for i = bgItt,1,-1
+	do
+		local bgglob = display.newCircle(math.random() * display.contentWidth, math.random() * display.contentHeight, math.random() * 40 + 90)
+		bgglob:setFillColor(math.random(),math.random(),math.random(),.5)
+		sceneGroup:insert(bgglob)
+		bgglob:toBack()
+		bgglob.rotate=math.random() * math.pi
+		squishX(bgglob)
+	end
+
         function createGlobule(type,size,startX,startY,deltaX,deltaY,red,green,blue)
 		local group = display.newGroup() -- All globule elements contained in a group, then we only have to manipulate the group
 		table.insert(globules,group)
