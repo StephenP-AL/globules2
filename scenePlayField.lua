@@ -166,6 +166,7 @@ function scene:show( event )
 			isAnimated = true
 		}
 	)
+	sceneGroup:insert(progressView)
 	--Globules
 	globules = {} --table to reference all globules
 
@@ -665,7 +666,7 @@ function scene:show( event )
 			if (globule.type == "paramecium") then
 				globule.jump = globule.jump - 1
 				if (globule.jump <= 0 and globule ~= nil) then
-					globule:applyForce((0.5 - math.random()) * globule.size , (.5 - math.random()) * globule.size   ) 
+					globule:applyForce((0.5 - math.random()) * globule.size , (.5 - math.random()) * globule.size   ) -- Sometimes applyForce is nil
 					globule.jump = math.random() * 200
 				end
 			end
