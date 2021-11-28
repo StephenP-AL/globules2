@@ -109,13 +109,18 @@ function scene:show( event )
 	local scoreImage = "scoreImage-removebg-preview.png"
 	--saturationText.anchorX = 0
 	--sceneGroup:insert(saturationText)
-	local scoreText = display.newText(score,5,-20, native.systemFont, 20)
+	scoreImageRect = display.newImageRect(scoreImage, 50, 50 )
+	scoreImageRect.x = 45;
+	scoreImageRect.y = -20;
+	scoreImageRect.anchorX = 1;
+	scoreImageRect.xScale = 0.80;
+	scoreImageRect.yScale = 0.80;
+	sceneGroup:insert(scoreImageRect)
+
+	local scoreText = display.newText(score,scoreImageRect.x + 7,-20, native.systemFont, 20)
 	scoreText.anchorX = 0
 	sceneGroup:insert(scoreText)
-	scoreImageRect = display.newImageRect(scoreImage, 50, 50 )
-	scoreImageRect.x = 50
-	scoreImageRect.y = -20
-	sceneGroup:insert(scoreImageRect)
+
 	updatedParTimer = tonumber(parTime);
 	local parTimerText = display.newText("Time Bonus: "..updatedParTimer, display.contentWidth - 120, -25);
 	parTimerText.anchorX = 0;
@@ -171,105 +176,96 @@ function scene:show( event )
 	globules = {} --table to reference all globules
 
 	local function ddRemoveNoClick(event)
+		if not dd then return end
+
 		damageOutput = 1;
-		dd.shape:removeSelf();
+		dd:destroy();
 		dd = nil;
 	end
 	
 	local function bombRemoveNoClick(event)
-		if (bomb ~= nil and bomb.shape ~= nil) then
-			bomb.shape:removeSelf();
-			bomb = nil;
-		end
+		if not bomb or not bomb.shape then return end
+		
+		bomb:destroy();
+		bomb = nil;
 	end
 
 	local function bigBombRemoveNoClick(event)
-		bigBomb.shape:removeSelf();
+		if not bigBomb then return end
+
+		bigBomb:destroy();
 		bigBomb = nil;
 	end
 
 	local function ddRemove(event)
+		if not dd then return end
+
 		damageOutput = 1;
 		dd = nil;
 	end
 
-	local function bombRemove(event)
-		bombBlastRadius.blast:removeSelf();
-		bombBlastRadius.shape:removeSelf();
-		bombBlastRadius = nil;
-	end
-
-	local function bigBombRemove(event)
-		bigBombBlast.blast:removeSelf();
-		bigBombBlast.shape:removeSelf();
-		bigBombBlast = nil;
-	end
-
 	local function ddActivate(event)
-		timer.cancel(powerupTimer);
-		dd.shape:removeSelf();
-		local activateTxt = display.newText(dd.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 24);
-		sceneGroup:insert(activateTxt);
-		dd:activate();
+		if powerupTimer then
+			timer.cancel(powerupTimer);
+		end
 
-		timer.performWithDelay(2000, function () activateTxt:removeSelf() activateTxt = nil end)
+		dd:destroy();
+		damageOutput = dd:activate(sceneGroup);
+
 		timer.performWithDelay(5000, ddRemove);
 
 		return true;
 	end
 
+	local function bombDetonate(event)
+		if (event.numTaps == 2) then
+			Runtime:removeEventListener("tap", bombDetonate);
+
+			if bomb.timer and bomb.activateTxt then
+				timer.cancel(bomb.timer);
+				bomb.activateTxt:removeSelf();
+			end
+
+			bomb = nil;
+			bombBlastRadius = BombBlastCircle:new({xPos=event.x, yPos=event.y});
+			bombBlastRadius:spawn(sceneGroup);
+			bombBlastRadius:activate(sceneGroup);
+			return true;
+		end
+	end
+
 	local function bombActivate(event)
-		if (powerupTimer ~= nil)then
+		if powerupTimer then
 			timer.cancel(powerupTimer);
 		end
 
-		local xVal = bomb.shape.xPos;
-		local yVal = bomb.shape.yPos;
-
-		bomb.shape:removeSelf();
-
-		bombBlastRadius = BombBlastCircle:new({xPos=xVal, yPos=yVal});
-		bombBlastRadius:spawn();
-		sceneGroup:insert(bombBlastRadius.blast);
-		sceneGroup:insert(bombBlastRadius.shape);
-
-		local activateTxt = display.newText(bombBlastRadius.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 24);
-		--sceneGroup:insert(activateTxt);
-		--dd:activate();
-
-		timer.performWithDelay(2000, function () activateTxt:removeSelf() activateTxt = nil end)
-		timer.performWithDelay(750, bombRemove);
+		bomb:arm(sceneGroup);
+		
+		Runtime:addEventListener("tap", bombDetonate);
 
 		return true;
 	end
 
 	local function bigBombActivate(event)
-		timer.cancel(powerupTimer);
+		if powerupTimer then
+			timer.cancel(powerupTimer);
+		end
 
 		local xVal = bigBomb.shape.xPos;
 		local yVal = bigBomb.shape.yPos;
 
-		bigBomb.shape:removeSelf();
+		bigBomb:destroy();
 
 		bigBombBlast = BigBombBlast:new({xPos=xVal, yPos=yVal});
-		bigBombBlast:spawn();
-		sceneGroup:insert(bigBombBlast.blast);
-		sceneGroup:insert(bigBombBlast.shape);
-
-		local activateTxt = display.newText(bigBombBlast.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 24);
-		--sceneGroup:insert(activateTxt);
-		--dd:activate();
-
-		timer.performWithDelay(2000, function () activateTxt:removeSelf() activateTxt = nil end)
-		timer.performWithDelay(750, bigBombRemove);
+		bigBombBlast:spawn(sceneGroup);
+		bigBombBlast:activate(sceneGroup);
 
 		return true;
 	end
 
 	local function spawnDoubleDamage()
 		dd = DoubleDamage:new();
-		dd:spawn();
-		sceneGroup:insert(dd.shape);
+		dd:spawn(sceneGroup);
 		dd.shape:addEventListener("touch", ddActivate);
 
 		powerupTimer = timer.performWithDelay(5000, ddRemoveNoClick);
@@ -277,9 +273,7 @@ function scene:show( event )
 
 	local function spawnBomb()
 		bomb = Bomb:new();
-		bomb:spawn();
-		print("Bomb: ",bomb)
-		--sceneGroup:insert(bomb.shape) --causes crash "bad argument #-2 to 'insert' (Proxy expected, got nil)"
+		bomb:spawn(sceneGroup);
 		bomb.shape:addEventListener("touch", bombActivate);
 
 		powerupTimer = timer.performWithDelay(5000, bombRemoveNoClick);
@@ -287,9 +281,8 @@ function scene:show( event )
 
 	local function spawnBigBomb()
 		bigBomb = BigBomb:new();
-		bigBomb:spawn();
+		bigBomb:spawn(sceneGroup);
 		bigBomb.shape:addEventListener("touch", bigBombActivate);
-		sceneGroup:insert(bigBomb.shape);
 
 		powerupTimer = timer.performWithDelay(3000, bigBombRemoveNoClick);
 	end
@@ -329,26 +322,25 @@ function scene:show( event )
 	end
 
 	local function removeAllPowerupsFromDisplay()
-		if (bomb == nil or bomb.shape == nil) then
-			print("No bombs")
-		else
-			print(bomb,bomb.shape)
---			bomb.shape:removeSelf();
-			bomb.shape = nil
+		if bomb and bomb.shape then
+			bomb:destroy();
+			bomb = nil;
 		end
-		if (dd ~= nil) then
-			dd.shape:removeSelf();
+		if dd and dd.shape then
+			dd:destroy();
+			dd = nil;
 		end
-		if (bigBomb ~= nil) then
-			bigBomb.shape:removeSelf();
+		if bigBomb and bigBomb.shape then
+			bigBomb:destroy();
+			bigBomb = nil;
 		end
-		if (bombBlastRadius ~= nil) then
-			bombBlastRadius.shape:removeSelf();
-			bombBlastRadius.blast:removeSelf();
+		if bombBlastRadius and bombBlastRadius.shape then
+			bombBlastRadius:destroy();
+			bombBlastRadius = nil;
 		end
-		if (bigBombBlast ~= nil) then
-			bigBombBlast.shape:removeSelf();
-			bigBombBlast.blast:removeSelf();
+		if bigBombBlast and bigBombBlast.shape then
+			bigBombBlast:destroy();
+			bigBombBlast = nil;
 		end
 	end
 
@@ -366,7 +358,7 @@ function scene:show( event )
 
 	local function globCollision(event)
 		if (event.phase == "began") then
-			if (bombBlastRadius ~= nil) then
+			if bombBlastRadius then
 				if (event.other == bombBlastRadius.shape) then
 					if (event.target.hp > 0) then
 						event.target.hp = event.target.hp - damageOutput;
@@ -380,7 +372,7 @@ function scene:show( event )
 					scoreText.text = score
 				end
 			end
-			if (bigBombBlast ~= nil) then
+			if bigBombBlast then
 				if (event.other == bigBombBlast.shape) then
 					event.target.delete = true
 					event.target:removeSelf();
@@ -604,7 +596,6 @@ function scene:show( event )
 		local blue = math.random()
 		createGlobule(type, testSize,startX,startY,deltaX,deltaY,red,green,blue)
    	end
---<<<<<<< HEAD
 
 	local function calculateScoreBonus(currentTimeBonus, totalParTime)
 
@@ -624,8 +615,6 @@ function scene:show( event )
 	end
 	end
 
---=======
--->>>>>>> levels
 	local options = {
 		isModal = true,
 		effect = "fade",

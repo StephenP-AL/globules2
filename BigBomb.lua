@@ -12,20 +12,14 @@ local BigBomb = Bomb:new(
 
 local filePath = "bomb.png";
 
-function BigBomb:spawn()
+function BigBomb:spawn(grp)
     self.shape = display.newImage(filePath);
     self.shape.xScale = 0.3;
     self.shape.yScale = 0.3;
-    self.shape.x = self.xPos;
-    self.shape.y = self.yPos;
     self.outline = graphics.newOutline(2, filePath);
-    self.shape.pp = self;
-    self.shape.tag = self.tag;
     physics.addBody(self.shape, "dynamic", {outline = self.outline});
-end
 
-function BigBomb:activate()
-
+    self:initShape(grp);
 end
 
 return BigBomb;
