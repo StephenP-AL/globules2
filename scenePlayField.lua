@@ -53,6 +53,8 @@ function scene:show( event )
 	bigBombBlast = nil;
 	powerupTimer = nil;
 	parTimer = nil;
+	activateTxt = nil;
+	activateTxtTimer = nil;
 
 
      	level = event.params.level
@@ -209,10 +211,12 @@ function scene:show( event )
 			timer.cancel(powerupTimer);
 		end
 
-		local activateTxt = display.newText(dd.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 24);
+		activateTxt = display.newText(dd.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 24);
 		sceneGroup:insert(activateTxt);
 	
-		timer.performWithDelay(1000, function () activateTxt:removeSelf() activateTxt = nil end);
+		if activateTxt then
+			activateTxtTimer = timer.performWithDelay(1000, function () activateTxt:removeSelf() activateTxt = nil end);
+		end
 
 		damageOutput = dd:activate(sceneGroup);
 		dd:destroy();
@@ -226,11 +230,12 @@ function scene:show( event )
 		if (event.numTaps == 2) then
 			Runtime:removeEventListener("tap", bombDetonate);
 
-			if bomb.timer and bomb.activateTxt then
-				timer.cancel(bomb.timer);
-				bomb.activateTxt:removeSelf();
+			if activateTxt then
+				timer.cancel(activateTxtTimer);
+				activateTxtTimer = nil;
+				activateTxt:removeSelf();
+				activateTxt = nil;
 			end
-
 			bomb = nil;
 			bombBlastRadius = BombBlastCircle:new({xPos=event.x, yPos=event.y});
 			bombBlastRadius:spawn(sceneGroup);
@@ -245,6 +250,12 @@ function scene:show( event )
 		end
 
 		bomb:arm(sceneGroup);
+		activateTxt = display.newText(bomb.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 12);
+		sceneGroup:insert(activateTxt);
+	
+		if activateTxt then
+			activateTxtTimer = timer.performWithDelay(1500, function () activateTxt:removeSelf() activateTxt = nil end);
+		end
 		
 		Runtime:addEventListener("tap", bombDetonate);
 
@@ -303,6 +314,10 @@ function scene:show( event )
 
 	local function activatePowerups()
 
+		if (updatedParTimer == math.floor(parTime / 4)) then
+			determinePowerupSpawn();
+			return;
+		end
 		if (updatedParTimer == math.floor(parTime / 2)) then
 			determinePowerupSpawn();
 			return;
@@ -313,7 +328,12 @@ function scene:show( event )
 			return;
 		end
 
-		if (saturation >= saturationLimit - 50) then
+		if (updatedParTimer == 1) then
+			determinePowerupSpawn();
+			return;
+		end
+
+		if (saturation >= saturationLimit - 75) then
 			--determinePowerupSpawn();
 			for i,powerup in pairs(powerupList) do
 				if (powerup == "bigBomb") then
@@ -346,6 +366,12 @@ function scene:show( event )
 		if bigBombBlast and bigBombBlast.shape then
 			bigBombBlast:destroy();
 			bigBombBlast = nil;
+		end
+		if activateTxt then
+			timer.cancel(activateTxtTimer);
+			activateTxtTimer = nil;
+			activateTxt:removeSelf();
+			activateTxt = nil;
 		end
 	end
 
@@ -387,7 +413,7 @@ function scene:show( event )
 				end
 			end
 		end
-	end
+		end
 	end
 
 	function scene:resumeGame()
