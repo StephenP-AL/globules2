@@ -209,6 +209,11 @@ function scene:show( event )
 			timer.cancel(powerupTimer);
 		end
 
+		local activateTxt = display.newText(dd.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 24);
+		sceneGroup:insert(activateTxt);
+	
+		timer.performWithDelay(1000, function () activateTxt:removeSelf() activateTxt = nil end);
+
 		damageOutput = dd:activate(sceneGroup);
 		dd:destroy();
 
@@ -404,7 +409,7 @@ function scene:show( event )
 			audio.play(hitSound)
 			addScore(1)
 			event.target.glob.strokeWidth = event.target.hp * 5 + 2
-			
+
 		elseif (event.target.size < 21) then
 			event.target.delete = true
 		        event.target:removeSelf()

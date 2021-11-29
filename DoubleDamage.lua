@@ -24,13 +24,6 @@ function DoubleDamage:spawn(grp)
 end
 
 function DoubleDamage:activate(grp)
-    self.activateTxt = display.newText(self.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 12);
-    grp:insert(self.activateTxt);
-
-    if self.activateTxt then
-        self.timer = timer.performWithDelay(1000, function () if self.activateTxt then self.activateTxt:removeSelf() self.activateTxt = nil end end)
-    end
-
     return 2;
 end
 
