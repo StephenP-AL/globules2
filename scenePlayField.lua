@@ -11,6 +11,9 @@ local csv = require("csv")
 local popSound = audio.loadSound("bubblePop.wav")
 local hitSound = audio.loadSound("hit_m12.wav")
 
+function catcherror(err)
+	print("ERROR:",err)
+end
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
 -- unless "composer.removeScene()" is called.
@@ -666,7 +669,14 @@ function scene:show( event )
 			if (globule.type == "paramecium") then
 				globule.jump = globule.jump - 1
 				if (globule.jump <= 0 and globule ~= nil) then
-					globule:applyForce((0.5 - math.random()) * globule.size , (.5 - math.random()) * globule.size   ) -- Sometimes applyForce is nil
+					local function jump()
+						globule:applyForce((0.5 - math.random()) * globule.size , (.5 - math.random()) * globule.size   )
+					end
+					if (pcall(jump)) then
+						--print("paramecium jump success")
+					else
+						print("paramecium jump fail",globule)
+					end
 					globule.jump = math.random() * 200
 				end
 			end
