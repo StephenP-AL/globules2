@@ -314,7 +314,7 @@ function scene:show( event )
 
 	local function activatePowerups()
 
-		if (updatedParTimer == math.floor(parTime / 4)) then
+		if (updatedParTimer == math.floor(parTime / 4) * 3) then
 			determinePowerupSpawn();
 			return;
 		end
