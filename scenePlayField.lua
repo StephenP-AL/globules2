@@ -10,6 +10,7 @@ local csv = require("csv")
 
 local popSound = audio.loadSound("bubblePop.wav")
 local hitSound = audio.loadSound("hit_m12.wav")
+local ddOffSound = audio.loadSound("double-damage-expire.wav");
 
 ---------------------------------------------------------------------------------
 -- All code outside of the listener functions will only be executed ONCE
@@ -201,7 +202,7 @@ function scene:show( event )
 
 	local function ddRemove(event)
 		if not dd then return end
-
+		audio.play(ddOffSound);
 		damageOutput = 1;
 		dd = nil;
 	end

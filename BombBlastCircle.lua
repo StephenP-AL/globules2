@@ -1,4 +1,5 @@
 local Bomb = require("Bomb");
+local bombExplosion = audio.loadSound("bomb-explosion.wav");
 
 local BombBlastCircle = Bomb:new(
     {
@@ -60,6 +61,7 @@ end
 
 function BombBlastCircle:activate(grp)
 
+    audio.play(bombExplosion);
     local removalTimer = timer.performWithDelay(750, removeBombBlastImg);
     removalTimer.params = { Self = self };
 end

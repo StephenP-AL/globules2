@@ -1,4 +1,5 @@
 local Powerup = require("Powerup");
+local activationSound = audio.loadSound("double-damage-get.wav");
 
 local DoubleDamage = Powerup:new(
     {
@@ -24,6 +25,7 @@ function DoubleDamage:spawn(grp)
 end
 
 function DoubleDamage:activate(grp)
+    audio.play(activationSound);
     return 2;
 end
 
