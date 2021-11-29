@@ -19,7 +19,7 @@ local filePath = "double-damage.png";
 function DoubleDamage:spawn(grp)
     self.shape = display.newImage(filePath);
     self.outline = graphics.newOutline(2, filePath);
-    physics.addBody(self.shape, "dynamic", {outline = self.outline});
+    physics.addBody(self.shape, "static", {outline = self.outline});
 
     self:initShape(grp);
 end

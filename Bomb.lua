@@ -17,7 +17,7 @@ function Bomb:spawn(grp)
     self.shape.xScale = 0.1;
     self.shape.yScale = 0.1;
     self.outline = graphics.newOutline(2, filePath);
-    physics.addBody(self.shape, "dynamic", {outline = self.outline});
+    physics.addBody(self.shape, "static", {outline = self.outline});
 
     self:initShape(grp);
 end
