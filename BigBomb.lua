@@ -14,8 +14,8 @@ local filePath = "bomb.png";
 
 function BigBomb:spawn(grp)
     self.shape = display.newImage(filePath);
-    self.shape.xScale = 0.3;
-    self.shape.yScale = 0.3;
+    self.shape.xScale = 0.5;
+    self.shape.yScale = 0.5;
     self.outline = graphics.newOutline(2, filePath);
     physics.addBody(self.shape, "dynamic", {outline = self.outline});
 

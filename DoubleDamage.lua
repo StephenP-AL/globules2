@@ -24,13 +24,13 @@ function DoubleDamage:spawn(grp)
 end
 
 function DoubleDamage:activate(grp)
-    local activateTxt = display.newText(self.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 24);
-    grp:insert(activateTxt);
+    self.activateTxt = display.newText(self.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 12);
+    grp:insert(self.activateTxt);
 
-    if activateTxt then
-        timer.performWithDelay(2000, function () activateTxt:removeSelf() activateTxt = nil end)
+    if self.activateTxt then
+        self.timer = timer.performWithDelay(1000, function () if self.activateTxt then self.activateTxt:removeSelf() self.activateTxt = nil end end)
     end
-    
+
     return 2;
 end
 

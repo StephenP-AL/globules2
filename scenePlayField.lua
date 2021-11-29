@@ -209,8 +209,8 @@ function scene:show( event )
 			timer.cancel(powerupTimer);
 		end
 
-		dd:destroy();
 		damageOutput = dd:activate(sceneGroup);
+		dd:destroy();
 
 		timer.performWithDelay(5000, ddRemove);
 
@@ -398,13 +398,13 @@ function scene:show( event )
 		scoreText.text = score
 	end
 	function tapGlobule(event)
-        	if (event.target.hp > 0) then
-		        event.target.hp = event.target.hp - damageOutput;
-			--TODO: need a visual and audio indicator of hit
+		if (event.target.hp == 2 or (event.target.hp == 1 and damageOutput == 1)) then
+			event.target.hp = event.target.hp - damageOutput;
+		--TODO: need a visual and audio indicator of hit
 			audio.play(hitSound)
 			addScore(1)
 			event.target.glob.strokeWidth = event.target.hp * 5 + 2
-
+			
 		elseif (event.target.size < 21) then
 			event.target.delete = true
 		        event.target:removeSelf()

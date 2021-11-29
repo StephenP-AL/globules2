@@ -8,13 +8,15 @@ local BigBombBlastCircle = BigBomb:new(
 )
 
 local function removeBombBlastImg(event)
-    event.pp:destroy();
+    local params = event.source.params;
+    local obj = params.Self;
+    obj:destroy();
 end
 
 local filePath = "bomb-explosion.png";
 
 function BigBombBlastCircle:spawn(grp)
-    self.shape = display.newCircle(self.xPos, self.yPos, display.contentWidth / 3);
+    self.shape = display.newCircle(self.xPos, self.yPos, display.contentWidth / 2);
     self.shape.alpha = 0;
     
     self.blast = display.newImage(filePath);
@@ -39,8 +41,8 @@ function BigBombBlastCircle:initShape(grp)
 
     self.blast.x = self.xPos;
     self.blast.y = self.yPos;
-    self.blast.xScale = 0.1;
-    self.blast.yScale = 0.1;
+    self.blast.xScale = 0.2;
+    self.blast.yScale = 0.2;
     self.blast.anchorX = 0.5;
     self.blast.anchorY = 0.5;
 
@@ -55,17 +57,13 @@ function BigBombBlastCircle:initShape(grp)
 end
 
 function BigBombBlastCircle:activate(grp)
-    local activateTxt = display.newText(self.activationMsg, display.contentCenterX, display.contentCenterY, ComicSans, 24);
-    grp:insert(activateTxt);
 
-    if self and activateTxt then
-        timer.performWithDelay(2000, function () activateTxt:removeSelf() activateTxt = nil end)
-    end
-
-    timer.performWithDelay(750, removeBombBlastImg);
+    local removalTimer = timer.performWithDelay(750, removeBombBlastImg);
+    removalTimer.params = { Self = self };
 end
 
 function BigBombBlastCircle:destroy()
+    if not self.shape or not self.blast then return end
     self.shape:removeSelf();
     self.blast:removeSelf();
     self.shape = nil;
