@@ -1,7 +1,7 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
 local widget = require("widget")
-local background = display.newImageRect("globulesBackgroundImage.jpg", display.contentWidth*2.2 , display.contentHeight*2.2 )
+local background = display.newImage("globulesBackgroundImage.jpg", display.contentWidth/1.3, display.contentHeight /2 )
 local levelbuttonImage = "LevelButtonGlobulesImage_adobespark (1).png"
 local settingsCogWheelImage = "cogWheelImage2.png"
 if (composer.getVariable("setVolume") == nil)then
