@@ -65,7 +65,7 @@ function scene:show( event )
       end
       local settingTop= display.newRoundedRect(display.contentCenterX,10,150,50,20)
       settingTop:setFillColor(0.2, 1, 1)
-      local settingText=display.newText("Setting",display.contentCenterX,10,native.systemFont, 30)
+      local settingText=display.newText("Settings",display.contentCenterX,10,native.systemFont, 30)
       settingText:setFillColor(1,0.5,0.5)
       settingTop.strokeWidth = 4;
       settingTop:setStrokeColor(1,0.5,0.4);

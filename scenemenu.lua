@@ -72,13 +72,7 @@ local function settingsListener(event)
          composer.gotoScene("sceneSettings",{params = params} )
       end
    end
---[[ moved to chapters
-local function winScreenListener(event)
-   if (event.phase == "ended") then
-      composer.gotoScene("sceneWinScreen");
-   end
-end
-]]
+
 local startButton = widget.newButton(
    {
       x = display.contentCenterX,
@@ -93,23 +87,8 @@ local startButton = widget.newButton(
       defaultFile= levelbuttonImage
    }
 );
- --[[ Redundant  
-   local introButton = widget.newButton(
-   {
-      x = display.contentCenterX,
-      y = display.contentCenterY-75,
-      id = "introduction",
-      label = "Introduction",
-      labelColor = { default={ 0.2, 1, 0 }, over={ 0.2, 1, 1} },
-      onEvent = startListener,
-      fontSize = 30, 
-      width = 200,
-      height = 85,
-      defaultFile= levelbuttonImage
-   }
-);
-]] 
-   local levelButton = widget.newButton(
+ 
+--[[   local levelButton = widget.newButton(
    {
       x = display.contentCenterX,
       y = display.contentCenterY,
@@ -123,22 +102,8 @@ local startButton = widget.newButton(
       defaultFile= levelbuttonImage
    }
 );
---[[ moved to chapters
-local testWinScreen = widget.newButton(
-   {
-      x = display.contentCenterX,
-      y = display.contentCenterY +75,
-      id = "testWinScreenBtn",
-      label = "Test Win Screen",
-      onEvent = winScreenListener,
-      labelColor = { default={ 1, 0.8, 0 }, over={ 0.2, 1, 1} },
-      defaultFile = levelbuttonImage,
-      fontSize = 30, 
-      width = 270,
-      height = 85
-   }
-);
 ]]
+
 
  local settingsCogWheel = widget.newButton(
    {
@@ -146,7 +111,7 @@ local testWinScreen = widget.newButton(
       x = display.contentCenterX,
       y = display.contentCenterY+75+75,
       id = "Setting",
-      label = "Setting",
+      label = "Settings",
       labelColor = { default={ 0.2, 1, 0 }, over={ 0.2, 1, 1} },
       onEvent = settingsListener,
       fontSize = 30, 
@@ -164,7 +129,7 @@ end
 sceneGroup:insert(background);
 --sceneGroup:insert(introButton);
 sceneGroup:insert(startButton);
-sceneGroup:insert(levelButton);
+--sceneGroup:insert(levelButton);
 sceneGroup:insert(settingsCogWheel);
 --sceneGroup:insert(testWinScreen);
 
