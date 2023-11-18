@@ -78,13 +78,18 @@ local startButton = widget.newButton(
       x = display.contentCenterX,
       y = display.contentCenterY-150,
       id = "startButton",
-      label = "Start",
+      label = "Story Mode",
       labelColor = { default={ 1, 0.8, 0 }, over={ 0.2, 1, 1} },
       onEvent = startListener,
       fontSize = 30, 
-      width = 150,
-      height = 85,
-      defaultFile= levelbuttonImage
+      width = 200,
+      height = 55,
+      cornerRadius = 20,
+      fillColor = { default={.2,.2,.8}, over={1,1,1}},
+      strokeColor = { default={1,1,1}, over={0,0,0}},
+      strokeWidth = 4,
+--      defaultFile= levelbuttonImage
+      shape = "roundedRect"
    }
 );
  
